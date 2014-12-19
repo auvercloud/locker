@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<title>AuverCloud Locker</title>
+		<meta name="description" content="AuverCloud Locker - Open Source secured notes manager.">
+
+		<meta http-equiv="content-type" content="text/xml; charset=utf-8" />
+		<link rel="shortcut icon" type="image/x-icon" href="../../all/ico/auvercloud.ico" />
+
+		<!-- FB -->
+		<meta property="og:title" content="Locker AuverCloud" />
+		<meta property="og:image" content="https://www.auvercloud.com/app/locker/img/locker.png" />
+		<meta property="og:image:type" content="image/png" />
+		<meta property="og:image:width" content="256" />
+		<meta property="og:image:height" content="256" />
+
+		<!-- TABLET AND SMARTPHONE -->
+		<meta name="viewport" content="width=device-width, user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+
+		<!-- iOS7 ICON -->
+		<link rel="apple-touch-icon" sizes="76x76"   href="img/locker-ico-0076.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="img/locker-ico-0120.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="img/locker-ico-0152.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="img/locker-ico-0180.png">
+
+		<!-- ANDROID ICON -->
+		<link rel="shortcut icon" sizes="192x192" href="img/sos-locker-0192.png">
+		<link rel="shortcut icon" sizes="144x144" href="img/sos-locker-0144.png">
+		<link rel="shortcut icon" sizes="96x96"   href="img/sos-locker-0096.png">
+		<link rel="shortcut icon" sizes="72x72"   href="img/sos-locker-0072.png">
+		<link rel="shortcut icon" sizes="48x48"   href="img/sos-locker-0048.png">
+
+		<!-- AUVERCLOUD MINIMIZED CLIENT: jQuery 2.1.3 + Crypto.js + AuverCloud client  -->
+		<script src="../../run/min/arc.min.js"></script>
+
+		<!-- JQUERY PLUGINS-->
+		<link type="text/css" rel="stylesheet" href= "../../all/lib/jQuery/Tooltipster/tooltipster.css" />
+		<script src="../../all/lib/jQuery/Tooltipster/jquery.tooltipster.min.js"></script>
+		<script src="../../all/lib/jQuery/Mobile/jquery.mobile.custom.min.js"></script>
+
+		<!-- AUVERCLOUD GUI -->
+		<script src="../../all/js/gui.js"></script>
+		<link type="text/css" rel="stylesheet" href= "../../all/css/gui.css" />
+
+		<!-- LOCKER -->
+		<link type="text/css" rel="stylesheet" href= "css/locker.css" />
+		<script type="text/javascript" src="js/locker.js"></script>
+
+	</head>
+	<body ontouchstart="" onmouseover="" class="shadow">
+		<section id="notif">
+			<table>
+				<tr>
+					<td id="notif-msg"></td>
+					<td >
+					<div class="uico icon-notif">
+						&#xe366;
+					</div></td>
+				</tr>
+			</table>
+		</section>
+		<section id="public">
+			<div class="module" id="brand">
+				<img id="logo" src="img/locker.png" width="32" height="32">
+				<span id="app-name" class="blue">auvercloud <span class="yellow-dark">locker</span></span>
+				<img class="tooltip rotation" id="langEn" src="img/flag.en.32x32.png" width="20" height="20">
+				<img class="tooltip rotation" id="langFr" src="img/flag.fr.32x32.png" width="20" height="20">
+			</div>
+			<div class="module" id="login">
+				<h3 id="loginTitle"></h3>
+				<div id="usr">
+					<div id="loginEmail" class="label"></div>
+					<table class="input border-grey">
+						<tr>
+							<td class="uico color-gray">&#xe19a;</td>
+							<td>
+							<input id="login-email" type="email" autocomplete="on">
+							</td>
+						</tr>
+						<tr>
+							<td></td>
+							<td class="input-error"></td>
+						</tr>
+					</table>
+				</div>
+				<div id="pwd">
+					<div id="loginPwd"  class="label"></div>
+					<table class="input border-grey">
+						<tr>
+							<td class="uico color-gray">&#xe1ca;</td>
+							<td>
+							<input  id="login-pwd" type="password" pattern="[0-9]*" inputmode="numeric">
+							</td>
+						</tr>
+						<tr>
+							<td></td>
+							<td><div class="input-error"></div></td>
+						</tr>
+					</table>
+				</div>
+				<table class="bar-btn">
+					<tr>
+						<td class="bar-error" id="login-error"></td>
+						<td class="btns"><div id="loginOK"class="btn no-select"></div></td>
+					</tr>
+				</table>
+				<br>
+			</div>
+			<div class="module" id="subscribe">
+				<h3 id="subscribeTitle"></h3>
+				<div id="sub-email">
+					<div id="subscribeEmail" class="label"></div>
+					<table class="input border-grey">
+						<tr>
+							<td class="uico color-gray">&#xe19a;</td>
+							<td>
+							<input id="subscribe-mailid" type="email">
+							</td>
+						</tr>
+						<tr>
+							<td></td>
+							<td class="input-error"></td>
+						</tr>
+					</table>
+				</div>
+				<div id="sub-capcha">
+					<div id="subscribeCapcha" class="label"></div>
+					<table class="input border-grey">
+						<tr>
+							<td id="capcha-refresh" class="uico color-gray">&#xe3a8;<img src="" height="24" width="144"></td>
+							<td>
+							<input id="subscribe-capcha" type="number" pattern="[0-9]*" inputmode="numeric">
+							</td>
+						</tr>
+						<tr>
+							<td></td>
+							<td><div class="input-error"></div></td>
+						</tr>
+					</table>
+				</div>
+				<table class="bar-btn">
+					<tr>
+						<td class="bar-error" id="subscribe-error"></td>
+						<td class="btns"><div id="subscribeOK" class="btn no-select"></div><div id="passwordOK"class="btn no-select"></div></td>
+					</tr>
+				</table>
+				<br>
+			</div>
+			<div class="module" id="publicNotes">
+				<div id="publicFooter"></div>
+				<div id="publicRelease"></div>
+			</div>
+		</section>
+		<section id="list">
+			<div class="bar-head">
+				<div id="logout" class="btn uico">
+					&#xe290;
+				</div>
+				<div id="pwd-toggle" class="btn uico">
+					&#xe1ca;
+				</div>
+				<div id="print-btn" class="btn uico">
+					&#xe119;
+				</div>
+				<div id="note-new" class="btn uico">
+					&#xe376;
+				</div>
+				<div id="note-search">
+					<div class="uico">
+						&#xe1b7;
+					</div>
+					<input type="text">
+				</div>
+			</div>
+			<div class="module" id="pwd-new">
+				<br>
+				<h3 id="pwdNew"></h3>
+				<div id="pwd1">
+					<div class="label" id="pwdNew1"></div>
+					<table class="input border-grey">
+						<tr>
+							<td class="uico color-gray">&#xe1ca;</td>
+							<td>
+							<input type="password" id="pwd-input1" inputmode="numeric">
+							</td>
+						</tr>
+						<tr>
+							<td></td>
+							<td class="input-error"></td>
+						</tr>
+					</table>
+				</div>
+				<div id="pwd2">
+					<div class="label" id="pwdNew2"></div>
+					<table class="input border-grey">
+						<tr>
+							<td class="uico color-gray">&#xe1ca;</td>
+							<td>
+							<input type="password" id="pwd-input2" inputmode="numeric">
+							</td>
+						</tr>
+						<tr>
+							<td></td>
+							<td><div class="input-error"></div></td>
+						</tr>
+					</table>
+				</div>
+				<table class="bar-btn">
+					<tr>
+						<td class="bar-error" id="pwd-new-error"></td>
+						<td class="btns"><div class="btn no-select w60" id="pwdNewStore"></div><div class="btn no-select w60 color-yellow-dark" id="pwdNewCancel"></div></td>
+					</tr>
+				</table>
+				<br>
+			</div>
+			<div class="module" id="list-empty">
+				<div>
+					<div class="uico">
+						&#xe3f9;
+					</div>
+					<span class="emptext" id="helpLogout"></span>
+				</div>
+				<div>
+					<div class="uico">
+						&#xe3f9;
+					</div>
+					<span class="emptext" id="helpNote"></span>
+				</div>
+				<div>
+					<div class="uico">
+						&#xe3f9;
+					</div>
+					<span class="emptext" id="helpSearch"></span>
+				</div>
+				<div class="clear"></div>
+			</div>
+			<table class="module" id="list-full"></table>
+
+			<div class="module" style="height:20px;background:#fff;"></div>
+		</section>
+		<section id="text">
+			<div class="module" id="toolbar">
+				<table class="uico">
+					<tr>
+						<td class="tool-default">&#xe461;</td>
+						<td class="tool-bold">&#xe454;</td>
+						<td class="tool-under">&#xe455;</td>
+						<td class="tool-ital">&#xe456;</td>
+						<td class="tool-color" style='color:#000'    id="col-black" >&#xe430;</td>
+						<td class="tool-color" style='color:#888'    id="col-grey"  >&#xe430;</td>
+						<td class="tool-color" style='color:#a00'    id="col-red"   >&#xe430;</td>
+						<td class="tool-color" style='color:#0a0'    id="col-green" >&#xe430;</td>
+						<td class="tool-color" style='color:#08A1D9' id="col-blue"  >&#xe430;</td>
+						<td class="tool-color" style='color:#FFCC00' id="col-yellow">&#xe430;</td>
+						<td class="tool-color" style='color:#800080' id="col-purple">&#xe430;</td>
+						<td class="tool-less">&#xe474;</td>
+						<td class="tool-more">&#xe473;</td>
+						<td class="tool-left">&#xe46f;</td>
+						<td class="tool-center">&#xe470;</td>
+						<td class="tool-right">&#xe471;</td>
+						<td class="tool-justify">&#xe472;</td>
+						<td class="tool-bullet">&#xe29a;</td>
+						<td class="tool-number">&#xe29c;</td>
+						<td class="tool-line">&#xe375;</td>
+
+					</tr>
+				</table>
+			</div>
+			<table class="bar-head" id="bar-text">
+				<tr>
+					<td>
+					<div class="btn uico">
+						&#xe3b3;
+					</div></td>
+					<td>
+					<div>
+						<span></span>
+					</div><div></div></td><td></td>
+				</tr>
+			</table>
+			<div class="module" id="key-new">
+				<br>
+				<h3 id="keyCreate"></h3>
+				<div id="key1">
+					<div class="label" id="keyNew1"></div>
+					<table class="input border-grey">
+						<tr>
+							<td class="uico color-gray">&#xe1ce;</td>
+							<td>
+							<input type="text" id="key-input1">
+							</td>
+						</tr>
+						<tr>
+							<td></td>
+							<td class="input-error"></td>
+						</tr>
+					</table>
+				</div>
+				<div id="key2">
+					<div class="label" id="keyNew2"></div>
+					<table class="input border-grey">
+						<tr>
+							<td class="uico color-gray">&#xe1ce;</td>
+							<td>
+							<input type="text" id="key-input2">
+							</td>
+						</tr>
+						<tr>
+							<td></td>
+							<td><div class="input-error"></div></td>
+						</tr>
+					</table>
+				</div>
+				<table class="bar-btn">
+					<tr>
+						<td class="bar-error" id="key-new-error"></td>
+						<td class="btns"><div class="btn no-select w60" id="keyNewStore"></div></td>
+					</tr>
+				</table>
+				<br>
+			</div>
+			<div class="module" id="key-enter">
+				<br>
+				<h3 id="keyInput"></h3>
+				<div class="label" id="keyIdle"></div>
+				<div id="key">
+					<table class="input border-grey">
+						<tr>
+							<td class="uico color-gray">&#xe1ce;</td>
+							<td>
+							<input type="password" id="key-input">
+							</td>
+						</tr>
+						<tr>
+							<td></td>
+							<td class="input-error"></td>
+						</tr>
+					</table>
+				</div>
+				<table class="bar-btn">
+					<tr>
+						<td class="bar-error" id="key-error"></td>
+						<td class="btns"><div  class="btn no-select w60" id="keyEnter"></div></td>
+					</tr>
+				</table>
+				<br>
+			</div>
+			<div class="module" id="text-edit">
+				<div id="text-content" contenteditable="true"></div>
+				<div id="text-empty" class="uico">
+					&#xe1d5;
+				</div>
+				<div></div>
+			</div>
+		</section>
+		<section id="print">
+			<table class="bar-head">
+				<tr>
+					<td class="uico">&#xe37d;</td>
+				</tr>
+			</table>
+			<div id="print-list">
+				Hello
+			</div>
+		</section>
+		<footer>
+			<div>
+				<table id="snb">
+					<tr>
+						<td class="verb" id="snbContact"></td><td><a class="uico sn-ico tooltip" id="snbContactEmail">&#xe169;</a><td class="verb" id="snbShare"></td><td><a class="uico sn-ico tooltip" id="snbShareMail">&#xe48f;</a><a target="_blank" class="uico sn-ico tooltip" id="snbShareFb">&#xe499;</a><a target="_blank" class="uico sn-ico tooltip" id="snbShareTw">&#xe49e;</a><a target="_blank" class="uico sn-ico tooltip" id="snbShareGplus">&#xe495;</a><a target="_blank" class="uico sn-ico tooltip" id="snbShareIn">&#xe4cf;</a></td><td class="verb" id="snbFollow"></td><td><a target="_blank" class="uico sn-ico tooltip" id="snbFollowTw">&#xe49d;</a></td><td></td>
+					</tr>
+				</table>
+			</div>
+		</footer>
+	</body>
+</html>
