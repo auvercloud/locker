@@ -54,8 +54,8 @@ var LOCKER = {
 	// Timer in ms to close an open note automatically. Should be < TTL: 5mn
 	AUTOCLOSE : 300000,
 	RELEASE : {
-		"en" : "Version 2.1 - December 18, 2014",
-		"fr" : "Version 2.1 - 18 décembre 2014",
+		"en" : "Version 2.1a - March 16, 2015",
+		"fr" : "Version 2.1a - 16 mars 2015",
 	}
 };
 
@@ -744,27 +744,31 @@ function ui() {
  * Return: N/A
  *************************************************************************************************** */
 function textSave(force) {
-	// Upload text note and list at least every 5s  if not idle (see arc.TIMER)
-	arc.delayed(function() {
-		var id = $("#text").data("id");
-		var now = arc.nowS();
+	
+	// Do not save empty content to prevent inappropriate save when faulty load
+	if ($("#text-content").html() != "") {
+		// Upload text note and list at least every 5s  if not idle (see arc.TIMER)
+		arc.delayed(function() {
+			var id = $("#text").data("id");
+			var now = arc.nowS();
 
-		// Update latest save time in title and list
-		$("#bar-text td:nth-child(2) >div:last-child").html(arc.getTime({
-			"time" : new Date()
-		}));
-		$("#" + id + " .item-time").attr("locker-time", now);
+			// Update latest save time in title and list
+			$("#bar-text td:nth-child(2) >div:last-child").html(arc.getTime({
+				"time" : new Date()
+			}));
+			$("#" + id + " .item-time").attr("locker-time", now);
 
-		// Save AES encrypt of text using MD5 hash of user key as encryption key
-		arc.apiSession("data_up", {
-			id : id,
-			data : Crypto.AES.encrypt($("#text-content").html(), Crypto.MD5($("#text").data("keyLive")))
-		});
-		listSave();
-	}, force);
+			// Save AES encrypt of text using MD5 hash of user key as encryption key
+			arc.apiSession("data_up", {
+				id : id,
+				data : Crypto.AES.encrypt($("#text-content").html(), Crypto.MD5($("#text").data("keyLive")))
+			});
+			listSave();
+		}, force);
 
-	// Update autoclose deadline
-	LOCKER.closeTime = arc.nowMS() + LOCKER.AUTOCLOSE;
+		// Update autoclose deadline
+		LOCKER.closeTime = arc.nowMS() + LOCKER.AUTOCLOSE;
+	}
 }
 
 /* *************************************************************************************************
@@ -1142,12 +1146,7 @@ function init() {
 	arc.getScript("js/msg.js" + "?" + Math.round(new Date().getTime()), function() {
 
 		// Check GET parameter(s) if any
-		var param = {
-			// API name
-			"api" : arc.paramGet("api"),
-			// Token ID
-			"tid" : arc.paramGet("tid")
-		};
+		var param = arc.urlParameters();
 
 		// Init localized messages
 		localize(arc.deviceLang());

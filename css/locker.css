@@ -1,12 +1,10 @@
 /* ************************************************************************
  * !!!!!!!! FONT FILES ARE NOT PART OF THE OPEN SOURCE DISTRIBUTION !!!!!!!
  * ************************************************************************/
-@media only screen {
-	@font-face {
-		font-family: 'uico';
-		src: url('../../../all/css/ultimate/icomoon-ultimate.eot');
-		src: url('../../../all/css/ultimate/icomoon-ultimate.eot?#iefix') format('embedded-opentype'), url('../../../all/css/ultimate/icomoon-ultimate.svg#icomoon-ultimate') format('svg'), url('../../../all/css/ultimate/icomoon-ultimate.woff') format('woff'), url('../../../all/css/ultimate/icomoon-ultimate.ttf') format('truetype');
-	}
+@font-face {
+	font-family: 'uico';
+	src: url('../../../all/css/ultimate/icomoon-ultimate.eot');
+	src: url('../../../all/css/ultimate/icomoon-ultimate.eot?#iefix') format('embedded-opentype'), url('../../../all/css/ultimate/icomoon-ultimate.svg#icomoon-ultimate') format('svg'), url('../../../all/css/ultimate/icomoon-ultimate.woff') format('woff'), url('../../../all/css/ultimate/icomoon-ultimate.ttf') format('truetype');
 }
 .uico {
 	font-family: uico;
@@ -768,6 +766,16 @@ h3 {
 	padding: 20px;
 	min-height: 20px;
 	font-size: 90%;
+}
+@media screen and (max-width: 480px) { 
+	.radio {
+		width: 100%;
+		border-left: none;
+		border-right: none;
+	}
+	#snb .verb {
+		display: none;
+	}
 }
 /* ************************************************************************
  * EoF
