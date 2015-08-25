@@ -1,70 +1,89 @@
 <!DOCTYPE html>
+<!--[if lt IE 7]>  <html id="oldie"> <![endif]-->
+<!--[if IE 7]>     <html id="oldie"> <![endif]-->
+<!--[if IE 8]>     <html id="oldie"> <![endif]-->
+<!--[if IE 9]>     <html id="oldie"> <![endif]-->
+<!--[if gt IE 9]>  <html> <![endif]-->
+<!--[if !IE]><!-->
 <html lang="fr">
+	<!--<![endif]-->
 	<head>
-		<title>AuverCloud Locker</title>
-		<meta name="description" content="AuverCloud Locker - Open Source secured notes manager.">
+		<title>SafeNote AuverCloud</title>
+		<meta name="description" content="AuverCloud SafeNote - Open Source secured notes manager.">
 
 		<meta http-equiv="content-type" content="text/xml; charset=utf-8" />
-		<link rel="shortcut icon" type="image/x-icon" href="../../all/ico/auvercloud.ico" />
+		<link rel="shortcut icon" type="image/x-icon" href="img/safenote.ico" />
 
 		<!-- FB -->
-		<meta property="og:title" content="Locker AuverCloud" />
-		<meta property="og:image" content="https://www.auvercloud.com/app/locker/img/locker.png" />
+		<meta property="og:title" content="AuverCloud SafeNote" />
+		<meta property="og:image" content="https://www.auvercloud.com/app/safenote/res/store/icon-0512.png" />
 		<meta property="og:image:type" content="image/png" />
-		<meta property="og:image:width" content="256" />
-		<meta property="og:image:height" content="256" />
+		<meta property="og:image:width" content="512" />
+		<meta property="og:image:height" content="512" />
 
-		<!-- TABLET AND SMARTPHONE -->
+		<!-- tablet and smartphone -->
 		<meta name="viewport" content="width=device-width, user-scalable=no">
-		<meta name="apple-mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
 
-		<!-- iOS7 ICON -->
-		<link rel="apple-touch-icon" sizes="76x76"   href="img/locker-ico-0076.png">
-		<link rel="apple-touch-icon" sizes="120x120" href="img/locker-ico-0120.png">
-		<link rel="apple-touch-icon" sizes="152x152" href="img/locker-ico-0152.png">
-		<link rel="apple-touch-icon" sizes="152x152" href="img/locker-ico-0180.png">
+		<!-- iOS icon -->
+		<link rel="apple-touch-icon" sizes="40x40"   href="res/ios/icon/icon-40.png">
+		<link rel="apple-touch-icon" sizes="80x80"   href="res/ios/icon/icon-40@2x.png">
+		<link rel="apple-touch-icon" sizes="50x50"   href="res/ios/icon/icon-50.png">
+		<link rel="apple-touch-icon" sizes="100x100" href="res/ios/icon/icon-50@2x.png">
+		<link rel="apple-touch-icon" sizes="60x60"   href="res/ios/icon/icon-60.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="res/ios/icon/icon-60@2x.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="res/ios/icon/icon-60@3x.png">
+		<link rel="apple-touch-icon" sizes="72x72"   href="res/ios/icon/icon-72.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="res/ios/icon/icon-72@2x.png">
+		<link rel="apple-touch-icon" sizes="76x76"   href="res/ios/icon/icon-76.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="res/ios/icon/icon-76@2x.png">
+		<link rel="apple-touch-icon" sizes="57x57"   href="res/ios/icon/icon.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="res/ios/icon/icon@2x.png">
 
-		<!-- ANDROID ICON -->
-		<link rel="shortcut icon" sizes="192x192" href="img/sos-locker-0192.png">
-		<link rel="shortcut icon" sizes="144x144" href="img/sos-locker-0144.png">
-		<link rel="shortcut icon" sizes="96x96"   href="img/sos-locker-0096.png">
-		<link rel="shortcut icon" sizes="72x72"   href="img/sos-locker-0072.png">
-		<link rel="shortcut icon" sizes="48x48"   href="img/sos-locker-0048.png">
+		<!-- Android icon -->
+		<link rel="shortcut icon" sizes="192x192" href="res/android/icon/px-192.png">
+		<link rel="shortcut icon" sizes="144x144" href="res/android/icon/px-144.png">
+		<link rel="shortcut icon" sizes="96x96"   href="res/android/icon/xhdpi.png">
+		<link rel="shortcut icon" sizes="72x72"   href="res/android/icon/hdpi.png">
+		<link rel="shortcut icon" sizes="48x48"   href="res/android/icon/mdpi.png">
 
-		<!-- AUVERCLOUD MINIMIZED CLIENT: jQuery 2.1.3 + Crypto.js + AuverCloud client  -->
-		<script src="../../run/min/arc.min.js"></script>
+		<!-- LIB CSS -->
+		<link type="text/css" rel="stylesheet" href= "https://www.auvercloud.com/sancy/lib/icomoon/icomoon.min.css" />
+		<link type="text/css" rel="stylesheet" href= "https://www.auvercloud.com/sancy/lib/normalize/normalize.css" />
+		<link type="text/css" rel="stylesheet" href= "https://www.auvercloud.com/sancy/lib/jquery/tooltipster/tooltipster.css" />
 
-		<!-- JQUERY PLUGINS-->
-		<link type="text/css" rel="stylesheet" href= "../../all/lib/jQuery/Tooltipster/tooltipster.css" />
-		<script src="../../all/lib/jQuery/Tooltipster/jquery.tooltipster.min.js"></script>
-		<script src="../../all/lib/jQuery/Mobile/jquery.mobile.custom.min.js"></script>
+		<!-- LIB JS -->
+		<script src="https://www.auvercloud.com/sancy/lib/jquery/jquery-2.1.4.min.js"></script>
+		<script src="https://www.auvercloud.com/sancy/lib/jquery/mobile/jquery.mobile.custom.min.js"></script>
+		<script src="https://www.auvercloud.com/sancy/lib/jquery/tooltipster/jquery.tooltipster.min.js"></script>
+		<script src="lib/crypto.min.js"></script>
 
-		<!-- AUVERCLOUD GUI -->
-		<script src="../../all/js/gui.js"></script>
-		<link type="text/css" rel="stylesheet" href= "../../all/css/gui.css" />
+		<!-- AUVERCLOUD RUNTIME  -->
+		<script src="https://www.auvercloud.com/run/min/arc.3.min.js"></script>
 
-		<!-- LOCKER -->
-		<link type="text/css" rel="stylesheet" href= "css/locker.css" />
-		<script type="text/javascript" src="js/locker.js"></script>
+		<!-- AUVERCLOUD LIB AND UI -->
+		<link type="text/css" rel="stylesheet" href= "https://www.auvercloud.com/sancy/css/auvercloud.css" />
+		<script src="https://www.auvercloud.com/sancy/js/lib.min.js"></script>
+
+		<!-- SAFENOTE -->
+		<link type="text/css" rel="stylesheet" href= "css/safenote.css" />
+		<script type="text/javascript" src="js/safenote.js"></script>
 
 	</head>
-	<body ontouchstart="" onmouseover="" class="shadow">
+	<body ontouchstart="" onmouseover="">
 		<section id="notif">
 			<table>
 				<tr>
 					<td id="notif-msg"></td>
-					<td >
-					<div class="uico icon-notif">
-						&#xe366;
-					</div></td>
+					<td ><div class="icon-notif icon-cancel-circle2"></div></td>
 				</tr>
 			</table>
 		</section>
 		<section id="public">
 			<div class="module" id="brand">
-				<img id="logo" src="img/locker.png" width="32" height="32">
-				<span id="app-name" class="blue">auvercloud <span class="yellow-dark">locker</span></span>
+				<img id="logo" src="img/safenote.png" width="40" height="40">
+				<span class="yellow-dark">safenote </span><span id="app-name" class="blue" >auvercloud</span>
 				<img class="tooltip rotation" id="langEn" src="img/flag.en.32x32.png" width="20" height="20">
 				<img class="tooltip rotation" id="langFr" src="img/flag.fr.32x32.png" width="20" height="20">
 			</div>
@@ -74,7 +93,7 @@
 					<div id="loginEmail" class="label"></div>
 					<table class="input border-grey">
 						<tr>
-							<td class="uico color-gray">&#xe19a;</td>
+							<td class="icon-user7 color-gray"></td>
 							<td>
 							<input id="login-email" type="email" autocomplete="on">
 							</td>
@@ -89,7 +108,7 @@
 					<div id="loginPwd"  class="label"></div>
 					<table class="input border-grey">
 						<tr>
-							<td class="uico color-gray">&#xe1ca;</td>
+							<td class="icon-key color-gray"></td>
 							<td>
 							<input  id="login-pwd" type="password" pattern="[0-9]*" inputmode="numeric">
 							</td>
@@ -114,7 +133,7 @@
 					<div id="subscribeEmail" class="label"></div>
 					<table class="input border-grey">
 						<tr>
-							<td class="uico color-gray">&#xe19a;</td>
+							<td class="icon-key color-gray"></td>
 							<td>
 							<input id="subscribe-mailid" type="email">
 							</td>
@@ -129,7 +148,7 @@
 					<div id="subscribeCapcha" class="label"></div>
 					<table class="input border-grey">
 						<tr>
-							<td id="capcha-refresh" class="uico color-gray">&#xe3a8;<img src="" height="24" width="144"></td>
+							<td id="capcha-refresh" class="icon-loop3"><img src="" height="24" width="144"></td>
 							<td>
 							<input id="subscribe-capcha" type="number" pattern="[0-9]*" inputmode="numeric">
 							</td>
@@ -155,22 +174,12 @@
 		</section>
 		<section id="list">
 			<div class="bar-head">
-				<div id="logout" class="btn uico">
-					&#xe290;
-				</div>
-				<div id="pwd-toggle" class="btn uico">
-					&#xe1ca;
-				</div>
-				<div id="print-btn" class="btn uico">
-					&#xe119;
-				</div>
-				<div id="note-new" class="btn uico">
-					&#xe376;
-				</div>
+				<div id="logout" class="btn icon-switch"></div>
+				<div id="pwd-toggle" class="btn icon-key"></div>
+				<div id="print-btn" class="btn icon-printer4"></div>
+				<div id="note-new" class="btn icon-plus2"></div>
 				<div id="note-search">
-					<div class="uico">
-						&#xe1b7;
-					</div>
+					<div class="icon-search"></div>
 					<input type="text">
 				</div>
 			</div>
@@ -181,7 +190,7 @@
 					<div class="label" id="pwdNew1"></div>
 					<table class="input border-grey">
 						<tr>
-							<td class="uico color-gray">&#xe1ca;</td>
+							<td class="icon-key color-gray"></td>
 							<td>
 							<input type="password" id="pwd-input1" inputmode="numeric">
 							</td>
@@ -196,7 +205,7 @@
 					<div class="label" id="pwdNew2"></div>
 					<table class="input border-grey">
 						<tr>
-							<td class="uico color-gray">&#xe1ca;</td>
+							<td class="icon-key color-gray"></td>
 							<td>
 							<input type="password" id="pwd-input2" inputmode="numeric">
 							</td>
@@ -217,21 +226,15 @@
 			</div>
 			<div class="module" id="list-empty">
 				<div>
-					<div class="uico">
-						&#xe3f9;
-					</div>
+					<div class="icon-arrow-up12"></div>
 					<span class="emptext" id="helpLogout"></span>
 				</div>
 				<div>
-					<div class="uico">
-						&#xe3f9;
-					</div>
+					<div class="icon-arrow-up12"></div>
 					<span class="emptext" id="helpNote"></span>
 				</div>
 				<div>
-					<div class="uico">
-						&#xe3f9;
-					</div>
+					<div class="icon-arrow-up12"></div>
 					<span class="emptext" id="helpSearch"></span>
 				</div>
 				<div class="clear"></div>
@@ -242,38 +245,35 @@
 		</section>
 		<section id="text">
 			<div class="module" id="toolbar">
-				<table class="uico">
+				<table>
 					<tr>
-						<td class="tool-default">&#xe461;</td>
-						<td class="tool-bold">&#xe454;</td>
-						<td class="tool-under">&#xe455;</td>
-						<td class="tool-ital">&#xe456;</td>
-						<td class="tool-color" style='color:#000'    id="col-black" >&#xe430;</td>
-						<td class="tool-color" style='color:#888'    id="col-grey"  >&#xe430;</td>
-						<td class="tool-color" style='color:#a00'    id="col-red"   >&#xe430;</td>
-						<td class="tool-color" style='color:#0a0'    id="col-green" >&#xe430;</td>
-						<td class="tool-color" style='color:#08A1D9' id="col-blue"  >&#xe430;</td>
-						<td class="tool-color" style='color:#FFCC00' id="col-yellow">&#xe430;</td>
-						<td class="tool-color" style='color:#800080' id="col-purple">&#xe430;</td>
-						<td class="tool-less">&#xe474;</td>
-						<td class="tool-more">&#xe473;</td>
-						<td class="tool-left">&#xe46f;</td>
-						<td class="tool-center">&#xe470;</td>
-						<td class="tool-right">&#xe471;</td>
-						<td class="tool-justify">&#xe472;</td>
-						<td class="tool-bullet">&#xe29a;</td>
-						<td class="tool-number">&#xe29c;</td>
-						<td class="tool-line">&#xe375;</td>
+						<td class="tool-default icon-text-color"></td>
+						<td class="tool-bold icon-bold2"></td>
+						<td class="tool-under icon-underline2"></td>
+						<td class="tool-ital icon-italic2"></td>
+						<td class="tool-color icon-square" style='color:#000'    id="col-black" ></td>
+						<td class="tool-color icon-square" style='color:#888'    id="col-grey"  ></td>
+						<td class="tool-color icon-square" style='color:#a00'    id="col-red"   ></td>
+						<td class="tool-color icon-square" style='color:#0a0'    id="col-green" ></td>
+						<td class="tool-color icon-square" style='color:#08A1D9' id="col-blue"  ></td>
+						<td class="tool-color icon-square" style='color:#FFCC00' id="col-yellow"></td>
+						<td class="tool-color icon-square" style='color:#800080' id="col-purple"></td>
+						<td class="tool-less icon-indent-decrease2"></td>
+						<td class="tool-more icon-indent-increase2"></td>
+						<td class="tool-left icon-paragraph-left2"></td>
+						<td class="tool-center icon-paragraph-center2"></td>
+						<td class="tool-right icon-paragraph-right2"></td>
+						<td class="tool-justify icon-paragraph-justify2"></td>
+						<td class="tool-bullet icon-list"></td>
+						<td class="tool-number icon-list-numbered"></td>
+						<td class="tool-line icon-minus3"></td>
 
 					</tr>
 				</table>
 			</div>
 			<table class="bar-head" id="bar-text">
 				<tr>
-					<td>
-					<div class="btn uico">
-						&#xe3b3;
-					</div></td>
+					<td><div class="btn icon-arrow-left"></div></td>
 					<td>
 					<div>
 						<span></span>
@@ -287,7 +287,7 @@
 					<div class="label" id="keyNew1"></div>
 					<table class="input border-grey">
 						<tr>
-							<td class="uico color-gray">&#xe1ce;</td>
+							<td class="icon-key5 color-gray"></td></td>
 							<td>
 							<input type="text" id="key-input1">
 							</td>
@@ -302,7 +302,7 @@
 					<div class="label" id="keyNew2"></div>
 					<table class="input border-grey">
 						<tr>
-							<td class="uico color-gray">&#xe1ce;</td>
+							<td class="icon-key5 color-gray"></td></td>
 							<td>
 							<input type="text" id="key-input2">
 							</td>
@@ -328,7 +328,7 @@
 				<div id="key">
 					<table class="input border-grey">
 						<tr>
-							<td class="uico color-gray">&#xe1ce;</td>
+							<td class="icon-key5 color-gray"></td></td>
 							<td>
 							<input type="password" id="key-input">
 							</td>
@@ -349,16 +349,14 @@
 			</div>
 			<div class="module" id="text-edit">
 				<div id="text-content" contenteditable="true"></div>
-				<div id="text-empty" class="uico">
-					&#xe1d5;
-				</div>
+				<div id="text-empty" class="icon-lock5"></div>
 				<div></div>
 			</div>
 		</section>
 		<section id="print">
 			<table class="bar-head">
 				<tr>
-					<td class="uico">&#xe37d;</td>
+					<td class="icon-exit3"></td>
 				</tr>
 			</table>
 			<div id="print-list">
@@ -369,7 +367,7 @@
 			<div>
 				<table id="snb">
 					<tr>
-						<td class="verb" id="snbContact"></td><td><a class="uico sn-ico tooltip" id="snbContactEmail">&#xe169;</a><td class="verb" id="snbShare"></td><td><a class="uico sn-ico tooltip" id="snbShareMail">&#xe48f;</a><a target="_blank" class="uico sn-ico tooltip" id="snbShareFb">&#xe499;</a><a target="_blank" class="uico sn-ico tooltip" id="snbShareTw">&#xe49e;</a><a target="_blank" class="uico sn-ico tooltip" id="snbShareGplus">&#xe495;</a><a target="_blank" class="uico sn-ico tooltip" id="snbShareIn">&#xe4cf;</a></td><td class="verb" id="snbFollow"></td><td><a target="_blank" class="uico sn-ico tooltip" id="snbFollowTw">&#xe49d;</a></td><td></td>
+						<td class="verb" id="snbShare"></td><td><a class="icon-mail sn-ico tooltip" id="snbShareMail"></a><a target="_blank" class="icon-facebook2 sn-ico tooltip" id="snbShareFb"></a><a target="_blank" class="icon-twitter2 sn-ico tooltip" id="snbShareTw"></a><a target="_blank" class="icon-google-plus2 sn-ico tooltip" id="snbShareGplus"></a><a target="_blank" class="icon-linkedin sn-ico tooltip" id="snbShareIn"></a></td><td class="verb" id="snbFollow"></td><td><a target="_blank" class="icon-twitter sn-ico tooltip" id="snbFollowTw"></a></td>
 					</tr>
 				</table>
 			</div>

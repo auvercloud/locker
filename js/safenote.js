@@ -1,18 +1,17 @@
 /* =================================================================================================
- * AUVERCLOUD LOCKER: Secured notes management
- * Version: 2.1
+ * AUVERCLOUD SAFENOTE: Secured notes management (formerly KySSME 1.0 then SOS 2.0 then  LOCKER 2.1)
+ * Version: 3.0
  *
- * LOCKER is a web application that aims at demonstrating how to develop a client/server web application
- * using only client technologies (HTML, CSS, JavaScript, jQuery) and the AuverCloud REST based API.
+ * SAFENOTE is a web application that aims at demonstrating how to develop a client/server web application
+ * using only client technologies (HTML, CSS, JavaScript, jQuery) and the AuverCloud REST based API server.
  *
- * LOCKER provides end userz with a service to edit and manage simple and secured notes.
+ * SAFENOTE provides end userz with a service to edit and manage simple and secured notes.
  *
- * LOCKER includes technologies from the following sources:
+ * SAFENOTE requires technologies from the following sources:
  * 		- jQuery: http://jquery.com/
  * 		- jQuery mobile: http://jquerymobile.com/
- * 		- Crypto JS: https://code.google.com/p/crypto-js/
  * 		- Tooltipster: http://iamceege.github.io/tooltipster/
- *
+ * 		- Crypto-js: https://code.google.com/p/crypto-js/
  *
  * Copyright 2014, 2015 Guillaume DORBES
  *
@@ -34,8 +33,6 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * =================================================================================================
- * LOCKER GLOBAL VARIABLES
  * ================================================================================================= */
 
 var LOCKER = {
@@ -54,21 +51,22 @@ var LOCKER = {
 	// Timer in ms to close an open note automatically. Should be < TTL: 5mn
 	AUTOCLOSE : 300000,
 	RELEASE : {
-		"en" : "Version 2.1a - March 16, 2015",
-		"fr" : "Version 2.1a - 16 mars 2015",
-	}
+		"en" : "Version 3.0 - July 31, 2015",
+		"fr" : "Version 3.0 - 31 juillet 2015",
+	},
+	ITEM : "<tr class='item' id='%%id%%'><td><div class='icon-arrow-up'></div><div class='icon-arrow-down'></div></td><td><div class='item-name'><input disabled type='text' placeholder='%%ph%%' value='%%name%%' maxlength='64'></div><div class='item-mask'></div><div class='item-time' locker-time='%%time%%'>%%date%%</div><div class='item-del'></div></td><td class='icon-cancel-circle'></td></tr>"
+
 };
 
 // Init time before autoclosing note
 LOCKER.closeTime = arc.FOREVER;
 
-/* *************************************************************************************************
- * LOCKER: localize
- * =================================================================================================
+/* ---------------------------------------------------------------------------------
+ * Function: localize
  * Purpose: Apply language dependent messages
  * Parameter(s) - lang: Language code e.g. "en", "fr"...
  * Return: N/A
- *************************************************************************************************** */
+ */
 
 function localize(lang) {
 	// Clear tooltips
@@ -79,7 +77,7 @@ function localize(lang) {
 	}
 
 	// Store the selected language as default for further page load
-	arc.deviceLang(lang);
+	arc.device.lang(lang);
 
 	// Update the language to messages related to static elements
 	LOCKER.MSG.forEach(function(m) {
@@ -107,9 +105,8 @@ function localize(lang) {
 	$('meta[name=description]').remove();
 	$('head').append("<meta name='description' content='" + LOCKER.MSG[36][lang] + "'>");
 
-	// Update generic footer
 	// Apply AuverCloud generic UI
-	snb({
+	arc.snb({
 		hashtag : "auvercloud"
 	});
 
@@ -117,23 +114,61 @@ function localize(lang) {
 	$('.tooltip').tooltipster({
 		restoration : 'current',
 		animation : 'grow',
-		delay : 600
+		delay : 600,
+		maxWidth : 300
 	});
 
 }
 
-/* *************************************************************************************************
- * LOCKER: ui
- * =================================================================================================
+/* ---------------------------------------------------------------------------------
+ * Function: profileInit
+ * Purpose: Init user profile
+ * Parameter(s) N/A
+ * Return: N/A
+ */
+function profileInit(profile) {
+
+	// Init local profile for new or existing user
+	if (profile == "") {
+		// New user
+		LOCKER.data = {
+			// Application data template
+			appSOS : {
+				// Ciphering key: Not yet defined
+				key : "",
+				// Empty list of notes
+				list : [],
+			},
+			// Customized note about the user
+			note : "This is a LOCKER user!"
+		};
+	} else
+		// Existing user
+		LOCKER.data = JSON.parse(profile);
+
+	// Update location
+	arc.api({
+		api : "location"
+	}, {
+		method : "get",
+		success : (function(r) {
+			LOCKER.data.ip = r.data.ip;
+			LOCKER.data.country = r.data.country;
+		})
+	});
+}
+
+/* ---------------------------------------------------------------------------------
+ * Function: ui
  * Purpose: Define User Interface events
  * Parameter(s) N/A
  * Return: N/A
- *************************************************************************************************** */
+ */
 
 function ui() {
 
 	// Disable toolbar for touch screen
-	if (arc.deviceTouch()) {
+	if (arc.touchable()) {
 		$("#toolbar").hide();
 		$("#bar-text").css("margin-top", "0px");
 	}
@@ -145,33 +180,27 @@ function ui() {
 
 	// Refresh capcha
 	$("#capcha-refresh").click(function() {
-		arc.api("utility_capcha_new", {
-			// Clear any existing token for the considered img
-			token : $("#sub-capcha img").data("token"),
-			// Consider also "text"
+		arc.api({
+			api : "challenge_new",
 			method : "operation",
-			// width = height * 6
 			height : 24,
-			// color code without # or "random"
 			color : "444444"
-		}, function(data) {
-
-			// Update capcha img and store related token
-			$("#sub-capcha img").attr("src", arc.CAPCHA_PATH + data.data.token + ".png").data("token", data.data.token);
-
-			// Clear capcha input
-			$("#sub-capcha input").val("");
+		}, {
+			success : function(r) {
+				$("#sub-capcha img").attr("src", "data:image/png;base64," + r.data.img).data("token", r.data.token);
+				$("#sub-capcha input").val("");
+			}
 		});
 	});
 
 	// Focus form input
 	$(".input input").focus(function() {
-		$(this).parents(".input").find(".uico").removeClass("color-gray").addClass("color-blue");
+		$(this).parents(".input").find(".color-gray").removeClass("color-gray").addClass("color-blue");
 	});
 
 	// Hover form input
 	$(".input input").blur(function() {
-		$(this).parents(".input").find(".uico").removeClass("color-blue").addClass("color-gray");
+		$(this).parents(".input").find(".color-blue").removeClass("color-blue").addClass("color-gray");
 	});
 
 	// Click to change language
@@ -185,64 +214,40 @@ function ui() {
 		// Clear error
 		$("#subscribe-error").html("");
 
-		// First retrieve current IP and country
-		arc.api("utility_ip2country", {}, function(x) {
-
-			// Init user profile
-			var profile = JSON.stringify({
-				// Application data template
-				"appSOS" : {
-					// Ciphering key: Not yet defined
-					"key" : "",
-					// Empty list of notes
-					"list" : [],
-				},
-				// Current API caller IP
-				"ip" : x.data.ip,
-				// Current API caller country
-				"country" : x.data.country,
-				// Customized note about the user
-				"note" : "This is a LOCKER user!"
-			});
-
-			// Send subscription data
-			arc.api("user_subscriber_new", {
-				// New user email. Password will be sent to this address after confirmation
-				mailid : $("#subscribe-mailid").val(),
-				// Capcha-like challenge result
-				capcha : $("#subscribe-capcha").val(),
-				// Capcha-like token
-				token : $("#sub-capcha img").data("token"),
-				// Callback address for confirmation links: This page
-				callback : "https://www.auvercloud.com/app/locker/",
-				// Customized confirm email subject
-				confirm_subject : LOCKER.MSG[7][arc.deviceLang()],
-				// Customized confirm email body
-				confirm_body : LOCKER.MSG[8][arc.deviceLang()],
-				// Customized conclude email subject
-				conclude_subject : LOCKER.MSG[9][arc.deviceLang()],
-				// Customized conclude email body
-				conclude_body : LOCKER.MSG[10][arc.deviceLang()],
-				// Initial user data
-				user_data : profile
-			}, function(o) {
+		// Subscription request
+		arc.api({
+			api : "subscribe",
+			// New user email.
+			email : $("#subscribe-mailid").val(),
+			// Capcha-like challenge result
+			challenge : $("#subscribe-capcha").val(),
+			// Capcha-like token
+			token : $("#sub-capcha img").data("token"),
+			// Callback address for confirmation link: This page!
+			callback : "https://www.auvercloud.com/app/safenote/",
+			// Customized  email subject
+			subject : LOCKER.MSG[7][arc.device.lang()],
+			// Customized  email content
+			content : LOCKER.MSG[8][arc.device.lang()]
+		}, {
+			success : function(o) {
 				if (o.code != "200") {
 
 					// Default confirmation error message
 					var msg = o.msg;
 					// Localized messages
 					switch(o.code) {
-					case "705":
-						msg = LOCKER.MSG[2][arc.deviceLang()];
+					case "641":
+						msg = LOCKER.MSG[2][arc.device.lang()];
 						break;
-					case "706":
-						msg = LOCKER.MSG[5][arc.deviceLang()];
+					case "643":
+						msg = LOCKER.MSG[5][arc.device.lang()];
 						break;
-					case "630":
-						msg = LOCKER.MSG[4][arc.deviceLang()];
+					case "650":
+						msg = LOCKER.MSG[4][arc.device.lang()];
 						break;
-					case "421":
-						msg = LOCKER.MSG[6][arc.deviceLang()];
+					case "606":
+						msg = LOCKER.MSG[6][arc.device.lang()];
 						break;
 					}
 
@@ -262,79 +267,76 @@ function ui() {
 				$("#capcha-refresh").trigger("click");
 
 				// Notify user
-				$("#notif-msg").html(LOCKER.MSG[0][arc.deviceLang()]);
+				$("#notif-msg").html(LOCKER.MSG[0][arc.device.lang()]);
 				$("#notif").slideDown(100);
-			});
+			}
 		});
+
 	});
 
-	// Click to subscribe
+	// Click to reset password
 	$("#passwordOK").click(function() {
 
 		// Clear error
 		$("#subscribe-error").html("");
 
-		// Send Password reset data
-		arc.api("user_password_new", {
-			// User email. The new password will be sent to this address after confirmation
-			mailid : $("#subscribe-mailid").val(),
+		// Request
+		arc.api({
+			api : "password_reset",
+			// Email ID
+			email : $("#subscribe-mailid").val(),
 			// Capcha-like challenge result
-			capcha : $("#subscribe-capcha").val(),
+			challenge : $("#subscribe-capcha").val(),
 			// Capcha-like token
 			token : $("#sub-capcha img").data("token"),
-			// Callback address for confirmation links: This page
-			callback : "https://www.auvercloud.com/app/locker/",
-			// Customized confirm email subject
-			confirm_subject : LOCKER.MSG[13][arc.deviceLang()],
-			// Customized confirm email body
-			confirm_body : LOCKER.MSG[14][arc.deviceLang()],
-			// Customized conclude email subject
-			conclude_subject : LOCKER.MSG[15][arc.deviceLang()],
-			// Customized conclude email body
-			conclude_body : LOCKER.MSG[16][arc.deviceLang()]
-		}, function(o) {
-			if (o.code != "200") {
+			// Callback address for confirmation link: This page!
+			callback : "https://www.auvercloud.com/app/safenote/",
+			// Customized  email subject
+			subject : LOCKER.MSG[13][arc.device.lang()],
+			// Customized  email content
+			content : LOCKER.MSG[14][arc.device.lang()]
+		}, {
+			success : function(o) {
+				if (o.code != "200") {
 
-				// Default confirmation error message
-				var msg = o.msg;
+					// Default confirmation error message
+					var msg = o.msg;
 
-				// Localized messages
-				switch(o.code) {
-				case "705":
-					msg = LOCKER.MSG[2][arc.deviceLang()];
-					break;
-				case "706":
-					msg = LOCKER.MSG[5][arc.deviceLang()];
-					break;
-				case "600":
-					msg = LOCKER.MSG[12][arc.deviceLang()];
-					break;
-				case "601":
-					msg = LOCKER.MSG[12][arc.deviceLang()];
-					break;
-				case "421":
-					msg = LOCKER.MSG[6][arc.deviceLang()];
-					break;
+					// Localized messages
+					switch(o.code) {
+					case "641":
+						msg = LOCKER.MSG[2][arc.device.lang()];
+						break;
+					case "643":
+						msg = LOCKER.MSG[5][arc.device.lang()];
+						break;
+					case "651":
+						msg = LOCKER.MSG[12][arc.device.lang()];
+						break;
+					case "606":
+						msg = LOCKER.MSG[6][arc.device.lang()];
+						break;
+					}
+
+					$("#subscribe-error").html(msg);
+					return;
 				}
 
-				$("#subscribe-error").html(msg);
-				return;
+				// Password reset OK after this point
+
+				// Prefill login input
+				$("#login-email").val($("#subscribe-mailid").val());
+
+				// Clear subscribe input
+				$("#subscribe-mailid").val("");
+
+				// Refresh capcha
+				$("#capcha-refresh").trigger("click");
+
+				// Notify user
+				$("#notif-msg").html(LOCKER.MSG[17][arc.device.lang()]);
+				$("#notif").slideDown(100);
 			}
-
-			// Password reset OK after this point
-
-			// Prefill login input
-			$("#login-email").val($("#subscribe-mailid").val());
-
-			// Clear subscribe input
-			$("#subscribe-mailid").val("");
-
-			// Refresh capcha
-			$("#capcha-refresh").trigger("click");
-
-			// Notify user
-			$("#notif-msg").html(LOCKER.MSG[17][arc.deviceLang()]);
-			$("#notif").slideDown(100);
 		});
 	});
 
@@ -344,59 +346,72 @@ function ui() {
 		$("#login-error").html("");
 
 		// Send login data
-		arc.api("user_session_start", {
+		arc.api({
+			api : "signin",
 			// Email ID
-			usr : $("#login-email").val(),
+			email : $("#login-email").val(),
 			// Password
-			pwd : $("#login-pwd").val(),
-			// Device ID = Hash code, required for concurrent sessions on multiple devices. Otherwise any string.
-			did : arc.deviceID(),
-			// Time To Leave. "g" => Forever.
-			ttl : "g"
-		}, function(o) {
+			password : $("#login-pwd").val(),
+			// Fingerprint = Hash code, required for concurrent sessions on multiple devices. Otherwise any string.
+			fingerprint : arc.device.fingerprint(),
+			// Time To Leave.
+			ttl : "forever"
+		}, {
+			success : function(o) {
 
-			if (o.code != "200") {
+				if (o.code != "200") {
 
-				// Default confirmation error message
-				var msg = o.msg;
+					// Default confirmation error message
+					var msg = o.msg;
 
-				// Localized messages
-				switch(o.code) {
-				case "600":
-					msg = LOCKER.MSG[18][arc.deviceLang()];
-					break;
-				case "601":
-					msg = LOCKER.MSG[18][arc.deviceLang()];
-					break;
-				case "604":
-					msg = LOCKER.MSG[18][arc.deviceLang()];
-					break;
-				case "606":
-					msg = LOCKER.MSG[37][arc.deviceLang()];
-					break;
-				case "421":
-					msg = LOCKER.MSG[6][arc.deviceLang()];
-					break;
+					// Localized messages
+					switch(o.code) {
+					case "651":
+						msg = LOCKER.MSG[18][arc.device.lang()];
+						break;
+					case "652":
+						msg = LOCKER.MSG[18][arc.device.lang()];
+						break;
+					case "653":
+						msg = LOCKER.MSG[37][arc.device.lang()];
+						break;
+					case "606":
+						msg = LOCKER.MSG[6][arc.device.lang()];
+						break;
+					}
+
+					$("#login-error").html(msg);
+					return;
 				}
 
-				$("#login-error").html(msg);
-				return;
+				// Login OK after this point
+
+				// Store session data: User ID, Session ID, End of Session time
+				arc.sessionStore({
+					uuid : o.data.uuid,
+					usid : o.data.usid,
+					udid : arc.device.fingerprint(),
+					eost : o.data.eost,
+				});
+
+				arc.api({
+					api : "profile_get"
+				}, {
+					session : true,
+					success : function(o) {
+
+						// Init local profile
+						profileInit(o.data.profile);
+
+						// Start private UI
+						$("#public").hide();
+						list();
+						$("#list").slideDown(100);
+
+					}
+				});
 			}
-
-			// Login OK after this point
-
-			// Store session data: User ID, Session ID, End of Session time
-			arc.userSessionStore(o.data.uid, o.data.sid, o.data.eos);
-
-			// Set application data
-			LOCKER.data = JSON.parse(o.data.data);
-
-			// Start private UI
-			$("#public").hide();
-			list();
-			$("#list").slideDown(100);
 		});
-
 	};
 	$("#loginOK").click(start);
 	$("#login-pwd").keydown(function(e) {
@@ -408,8 +423,17 @@ function ui() {
 	$("#logout").click(function() {
 
 		// Clear session data server and client sides
-		arc.apiSession("user_session_stop", {});
-		arc.userSessionDelete();
+		arc.api({
+			api : "signout"
+		}, {
+			session : true,
+			success : function(o) {
+				arc.cake.erase("uuid");
+				arc.cake.erase("usid");
+				arc.cake.erase("udid");
+				arc.cake.erase("eost");
+			}
+		});
 		LOCKER.data = {};
 
 		// Back to public UI
@@ -422,27 +446,34 @@ function ui() {
 	$("#note-new").click(function(o) {
 
 		// get a new data ID related to an empty string
-		arc.apiSession("data_up", {
+		arc.api({
+			api : "data_up",
 			data : ""
-		}, function(o) {
+		}, {
+			session : true,
+			success : function(o) {
 
-			if (o.code != "200")
-				return;
+				if (o.code != "200")
+					return;
 
-			// Add the new data ID to the user data list
-			LOCKER.data.appSOS.list.unshift({
-				id : o.data.data_id,
-				name : "",
-				time : arc.nowS()
-			});
+				// Add the new data ID to the user data list
+				LOCKER.data.appSOS.list.unshift({
+					id : o.data,
+					name : "",
+					time : Math.round(new Date() / 1000)
+				});
 
-			// Refresh the list UI
-			list();
+				// Refresh the list UI
+				list();
 
-			// Save
-			arc.apiSession("user_data_set", {
-				user_data : JSON.stringify(LOCKER.data)
-			});
+				// Save
+				arc.api({
+					api : "profile_set",
+					profile : JSON.stringify(LOCKER.data)
+				}, {
+					session : true
+				});
+			}
 		});
 	});
 
@@ -470,7 +501,7 @@ function ui() {
 	});
 
 	// Clear search
-	$("#note-search .uico").click(function() {
+	$("#note-search .icon-search").click(function() {
 		// Clear search
 		$("#note-search input").val("");
 
@@ -488,13 +519,13 @@ function ui() {
 
 		// Check inputs against regular expression
 		if (!(LOCKER.REX.test($("#key-input1").val()) && LOCKER.REX.test($("#key-input2").val()))) {
-			$("#key-new-error").html(LOCKER.MSG[23][arc.deviceLang()]);
+			$("#key-new-error").html(LOCKER.MSG[23][arc.device.lang()]);
 			return;
 		}
 
 		// Check inputs match
 		if ($("#key-input1").val() != $("#key-input2").val()) {
-			$("#key-new-error").html(LOCKER.MSG[24][arc.deviceLang()]);
+			$("#key-new-error").html(LOCKER.MSG[24][arc.device.lang()]);
 			return;
 		}
 
@@ -507,7 +538,7 @@ function ui() {
 
 		// Store temporary unhashed key value in the DOM and load note
 		$("#text").data("keyLive", $("#key-input1").val());
-		$("#text").data("keyTime", arc.nowMS() + LOCKER.TTL);
+		$("#text").data("keyTime", new Date().getTime() + LOCKER.TTL);
 		$("#key-input1, #key-input2").val("");
 		textLoad($("#text").data("id"));
 	});
@@ -519,13 +550,13 @@ function ui() {
 
 		// Check inputs against regular expression
 		if (!LOCKER.REX.test($("#key-input").val())) {
-			$("#key-error").html(LOCKER.MSG[23][arc.deviceLang()]);
+			$("#key-error").html(LOCKER.MSG[23][arc.device.lang()]);
 			return;
 		}
 
 		// Check key against SHA256 hash
 		if (Crypto.SHA256($("#key-input").val()) != LOCKER.data.appSOS.key) {
-			$("#key-error").html(LOCKER.MSG[25][arc.deviceLang()]);
+			$("#key-error").html(LOCKER.MSG[25][arc.device.lang()]);
 			return;
 		}
 
@@ -534,7 +565,7 @@ function ui() {
 
 		// Store temporary unhashed key value in the DOM and load note
 		$("#text").data("keyLive", $("#key-input").val());
-		$("#text").data("keyTime", arc.nowMS() + LOCKER.TTL);
+		$("#text").data("keyTime", new Date().getTime() + LOCKER.TTL);
 		$("#key-input").val("");
 		textLoad($("#text").data("id"));
 	};
@@ -586,7 +617,8 @@ function ui() {
 	// Text tools
 	$("#toolbar td").mousedown(function(e) {
 		e.preventDefault();
-		switch($(this).attr("class")) {
+		var str = $(this).attr("class");
+		switch(str.substr(0,str.indexOf(' '))) {
 		case "tool-bold":
 			document.execCommand("bold", false, "");
 			break;
@@ -658,6 +690,8 @@ function ui() {
 	// Toggle password change
 	$("#pwd-toggle").click(function() {
 		$("#pwd-new").toggle();
+		$("#list-empty").css("opacity", 0);
+		$("#pwd-new-error").html("");
 	});
 
 	// Cancel password change
@@ -671,25 +705,29 @@ function ui() {
 
 		// Check inputs against regular expression
 		if (!(LOCKER.PWD.test($("#pwd-input1").val()) && LOCKER.PWD.test($("#pwd-input2").val()))) {
-			$("#pwd-new-error").html(LOCKER.MSG[27][arc.deviceLang()]);
+			$("#pwd-new-error").html(LOCKER.MSG[27][arc.device.lang()]);
 			return;
 		}
 
 		// Check inputs match
 		if ($("#pwd-input1").val() != $("#pwd-input2").val()) {
-			$("#pwd-new-error").html(LOCKER.MSG[28][arc.deviceLang()]);
+			$("#pwd-new-error").html(LOCKER.MSG[28][arc.device.lang()]);
 			return;
 		}
 
-		arc.apiSession("user_password_update", {
-			pwd : $("#pwd-input1").val()
-		}, function(o) {
-			if (o.code == "200")
-				// Hide Password change UI
-				$("#pwd-new").slideUp();
-			else
-				// Keep password change UI with error message
-				$("#pwd-new-error").html(o.msg);
+		arc.api({
+			api : "password_change",
+			password : $("#pwd-input1").val()
+		}, {
+			session : true,
+			success : function(o) {
+				if (o.code == "200")
+					// Hide Password change UI
+					$("#pwd-new").slideUp();
+				else
+					// Keep password change UI with error message
+					$("#pwd-new-error").html(o.msg);
+			}
 		});
 	});
 
@@ -697,8 +735,8 @@ function ui() {
 	$("#print-btn").click(function() {
 
 		// No printable list if the key is not active
-		if ($("#text").data("keyTime") == 0 || arc.nowMS() > $("#text").data("keyTime")) {
-			alert(LOCKER.MSG[34][arc.deviceLang()]);
+		if ($("#text").data("keyTime") == 0 || new Date().getTime() > $("#text").data("keyTime")) {
+			alert(LOCKER.MSG[34][arc.device.lang()]);
 			return;
 		}
 
@@ -715,14 +753,18 @@ function ui() {
 			$("#print-list").append("<div class='print-note-title'>" + note.name + "</div><div class='print-note-content' id='pnc-" + note.id + "'></div>");
 
 			// Note content
-			arc.apiSession("data_down", {
+			arc.api({
+				api : "data_down",
 				id : note.id
-			}, function(o) {
-				if (o.code != "200")
-					return;
+			}, {
+				session : true,
+				success : function(o) {
+					if (o.code != "200")
+						return;
 
-				// AES decrypt of text using MD5 hash of user key as encryption key
-				$("#pnc-" + note.id).html(Crypto.AES.decrypt(o.data.data, Crypto.MD5($("#text").data("keyLive"))));
+					// AES decrypt of text using MD5 hash of user key as encryption key
+					$("#pnc-" + note.id).html(Crypto.AES.decrypt(o.data.data, Crypto.MD5($("#text").data("keyLive"))));
+				}
 			});
 		});
 	});
@@ -730,27 +772,25 @@ function ui() {
 	// Quit printable list
 	$("#print .bar-head").click(function() {
 		$("#print-list").html("");
-		$("body").addClass("shadow");
 		$("#print").hide();
 		$("#list").slideDown();
 	});
 }
 
-/* *************************************************************************************************
- * LOCKER: textSave
- * =================================================================================================
+/* ---------------------------------------------------------------------------------
+ * Function: textSave
  * Purpose: Update UI and save encrypted text and list
  * Parameter(s) - force : If set to true save now, other save on timer arc.TIMER
  * Return: N/A
- *************************************************************************************************** */
+ */
 function textSave(force) {
-	
+
 	// Do not save empty content to prevent inappropriate save when faulty load
 	if ($("#text-content").html() != "") {
 		// Upload text note and list at least every 5s  if not idle (see arc.TIMER)
 		arc.delayed(function() {
 			var id = $("#text").data("id");
-			var now = arc.nowS();
+			var now = Math.round(new Date() / 1000);
 
 			// Update latest save time in title and list
 			$("#bar-text td:nth-child(2) >div:last-child").html(arc.getTime({
@@ -759,64 +799,64 @@ function textSave(force) {
 			$("#" + id + " .item-time").attr("locker-time", now);
 
 			// Save AES encrypt of text using MD5 hash of user key as encryption key
-			arc.apiSession("data_up", {
+			arc.api({
+				api : "data_up",
 				id : id,
 				data : Crypto.AES.encrypt($("#text-content").html(), Crypto.MD5($("#text").data("keyLive")))
+			}, {
+				session : true
 			});
 			listSave();
 		}, force);
 
 		// Update autoclose deadline
-		LOCKER.closeTime = arc.nowMS() + LOCKER.AUTOCLOSE;
+		LOCKER.closeTime = new Date().getTime() + LOCKER.AUTOCLOSE;
 	}
 }
 
-/* *************************************************************************************************
- * LOCKER: textLoad
- * =================================================================================================
+/* ---------------------------------------------------------------------------------
+ * Function: textLoad
  * Purpose: Load text from server, decrypt and display
  * Parameter(s) id = note ID
  * Return: N/A
- *************************************************************************************************** */
-
+ */
 function textLoad(id) {
 	// Download note from server
-	arc.apiSession("data_down", {
+	arc.api({
+		api : "data_down",
 		id : id
-	}, function(o) {
-		if (o.code != "200") {
-			console.log("Text loading error", o.code, o.msg);
-			return;
+	}, {
+		session : true,
+		success : function(o) {
+			if (o.code != "200") {
+				console.log("Text loading error", o.code, o.msg);
+				return;
+			}
+
+			// Hide default UI
+			$("#text-empty").hide();
+
+			// Show text content
+			if (o.data.data == "") {
+				$("#text-content").html("").slideDown(100);
+			} else {
+				// AES decrypt of text using MD5 hash of user key as encryption key
+				$("#text-content").html(Crypto.AES.decrypt(o.data.data, Crypto.MD5($("#text").data("keyLive")))).slideDown(100);
+			}
+
+			// Set autoclose deadline
+			LOCKER.closeTime = new Date().getTime() + LOCKER.AUTOCLOSE;
 		}
-
-		// Hide default UI
-		$("#text-empty").hide();
-
-		// Show text content
-		if (o.data.data == "") {
-			$("#text-content").html("").slideDown(100);
-		} else {
-			// AES decrypt of text using MD5 hash of user key as encryption key
-			$("#text-content").html(Crypto.AES.decrypt(o.data.data, Crypto.MD5($("#text").data("keyLive")))).slideDown(100);
-		}
-
-		// Set autoclose deadline
-		LOCKER.closeTime = arc.nowMS() + LOCKER.AUTOCLOSE;
 	});
 
 }
 
-/* *************************************************************************************************
-* LOCKER: list
-* =================================================================================================
-* Purpose: Build the note list UI
-* Parameter(s) N/A
-* Return: N/A
-*************************************************************************************************** */
-
-// List item template used to build the list UI
-LOCKER.itemTemplate = "<tr class='item' id='%%id%%'><td><div class='uico'>&#xe3b0;</div><div class='uico'>&#xe3b2;</div></td><td><div class='item-name'><input disabled type='text' placeholder='%%ph%%' value='%%name%%' maxlength='64'></div><div class='item-mask'></div><div class='item-time' locker-time='%%time%%'>%%date%%</div><div class='item-del'></div></td><td class='uico'>&#xe366;</td></tr>";
-
+/* ---------------------------------------------------------------------------------
+ * Function: list
+ * Purpose: Build the note list UI
+ * Parameter(s) N/A
+ * Return: N/A
+ */
 function list() {
 
 	if (LOCKER.data.appSOS.list.length == 0) {
@@ -834,11 +874,11 @@ function list() {
 
 	// Build the list
 	LOCKER.data.appSOS.list.forEach(function(note) {
-		var item = LOCKER.itemTemplate;
+		var item = LOCKER.ITEM;
 		item = item.replace("%%id%%", note.id);
 		item = item.replace("%%name%%", note.name);
 		item = item.replace("%%time%%", note.time);
-		item = item.replace("%%ph%%", LOCKER.MSG[19][arc.deviceLang()]);
+		item = item.replace("%%ph%%", LOCKER.MSG[19][arc.device.lang()]);
 		item = item.replace("%%date%%", arc.getTime({
 			"time" : new Date(note.time * 1000)
 		}));
@@ -939,7 +979,7 @@ function list() {
 		item.find(".item-mask").hide();
 		item.css("background-color", "#FFCC00");
 		item.find(".item-name, .item-time").hide();
-		item.find(".item-del").html("<div class='btn'>" + LOCKER.MSG[20][arc.deviceLang()] + "</div><div class='btn'>" + LOCKER.MSG[21][arc.deviceLang()] + "</div>");
+		item.find(".item-del").html("<div class='btn'>" + LOCKER.MSG[20][arc.device.lang()] + "</div><div class='btn'>" + LOCKER.MSG[21][arc.device.lang()] + "</div>");
 		item.find(".item-del").fadeIn();
 
 		// Cancel delete
@@ -966,15 +1006,18 @@ function list() {
 			$("#list-full").data("semaphore", false);
 
 			// If the key is not 'alive' => Alert !
-			if ($("#text").data("keyTime") == 0 || arc.nowMS() > $("#text").data("keyTime"))
-				alert(LOCKER.MSG[29][arc.deviceLang()]);
+			if ($("#text").data("keyTime") == 0 || new Date().getTime() > $("#text").data("keyTime"))
+				alert(LOCKER.MSG[29][arc.device.lang()]);
 			else
 				// Reset UI and clear data
 				item.fadeOut(function() {
 
 					// Delete note on server
-					arc.apiSession("data_delete", {
+					arc.api({
+						api : "data_delete",
 						id : item.attr("id")
+					}, {
+						session : true
 					});
 
 					// Remove list item and save
@@ -1025,7 +1068,7 @@ function list() {
 		}
 
 		// If the key is not 'alive', clear former key data and show the key input UI
-		if ($("#text").data("keyTime") == 0 || arc.nowMS() > $("#text").data("keyTime")) {
+		if ($("#text").data("keyTime") == 0 || new Date().getTime() > $("#text").data("keyTime")) {
 			$("#key-enter").show();
 			$("#text").data("keyLive", false);
 			$("#text").data("keyTime", 0);
@@ -1036,14 +1079,19 @@ function list() {
 		}
 
 		// After this point, the key is alive then its TTL is refreshed and the text is loaded
-		$("#text").data("keyTime", arc.nowMS() + LOCKER.TTL);
+		$("#text").data("keyTime", new Date().getTime() + LOCKER.TTL);
 		$("#text").slideDown(100);
 		textLoad($("#text").data("id"));
 
 	});
 }
 
-//* ******************************* Clear all items editing UI ******************************* */
+/* ---------------------------------------------------------------------------------
+ * Function: clearItem
+ * Purpose: Clear all items editing UI
+ * Parameter(s) N/A
+ * Return: N/A
+ */
 function clearItem() {
 	$(".item-name").css("background-color", "#fff");
 	$(".item input").css("background-color", "#fff").css("cursor", "pointer").prop("disabled", true);
@@ -1051,14 +1099,12 @@ function clearItem() {
 
 }
 
-/* *************************************************************************************************
- * LOCKER: listSave
- * =================================================================================================
+/* ---------------------------------------------------------------------------------
+ * Function: listSave
  * Purpose: Parse the list UI and save the user data
  * Parameter(s) N/A
  * Return: N/A
- *************************************************************************************************** */
-
+ */
 function listSave() {
 
 	// Parse the UI list
@@ -1075,19 +1121,21 @@ function listSave() {
 	LOCKER.data.appSOS.list = l;
 
 	// Save
-	arc.apiSession("user_data_set", {
-		user_data : JSON.stringify(LOCKER.data)
+	arc.api({
+		api : "profile_set",
+		profile : JSON.stringify(LOCKER.data)
+	}, {
+		session : true
 	});
 }
 
-/* *************************************************************************************************
- * LOCKER: autoclose
- * =================================================================================================
+/* ---------------------------------------------------------------------------------
+ * Function: autoclose
  * Purpose: Loop to close automatically an open note according to LOCKER.AUTOCLOSE timer
  * Return: N/A
- *************************************************************************************************** */
+ */
 function autoclose() {
-	if (arc.nowMS() > LOCKER.closeTime) {
+	if (new Date().getTime() > LOCKER.closeTime) {
 		// Clear autoclose deadline
 		LOCKER.closeTime = arc.FOREVER;
 
@@ -1101,17 +1149,17 @@ function autoclose() {
 		$("#list").slideDown(100);
 
 		if (arc.DEBUG)
-			console.log("Locker: Note autoclosed");
+			console.log("SafeNote: Note autoclosed");
 	}
 	if (arc.DEBUG)
-		console.log("Locker: now", arc.nowS());
+		console.log("SafeNote: now", new Date().getTime());
 	// Loop every 5 seconds
 	setTimeout(autoclose, 5000);
 }
 
-/* *************************************************************************************************
+/* ---------------------------------------------------------------------------------
  * EVERYTHING STARTS HERE!
- *************************************************************************************************** */
+ */
 function init() {
 
 	// Merge default AuverCloud data with LOCKER specific application data
@@ -1120,36 +1168,18 @@ function init() {
 		DEBUG : false,
 		// Set Application key. MUST for any server API call
 		APP_KEY : "43a2348027cdb8d216f4fb15fd9e1e4f53a93ef40b65f",
-		// List of supported languages: See localized messages below.
-		APP_LANGUAGE_SUPPORTED : ["en", "fr"],
+		// Application name for local storage
+		APP_NAME : "SafeNote",
 	});
 
-	// Application tracking
-	arc.api("utility_page_log");
-
-	(function(i, s, o, g, r, a, m) {
-		i['GoogleAnalyticsObject'] = r;
-		i[r] = i[r] ||
-		function() {
-			(i[r].q = i[r].q || []).push(arguments);
-		}, i[r].l = 1 * new Date();
-		a = s.createElement(o),
-		m = s.getElementsByTagName(o)[0];
-		a.async = 1;
-		a.src = g;
-		m.parentNode.insertBefore(a, m);
-	})(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
-	ga('create', 'UA-53810034-1', 'auto');
-	ga('send', 'pageview');
+	// Generic AuverCloud UI utilities
+	web();
 
 	// Load localized messages
-	arc.getScript("js/msg.js" + "?" + Math.round(new Date().getTime()), function() {
-
-		// Check GET parameter(s) if any
-		var param = arc.urlParameters();
+	$.getScript("js/safenote-msg.js" + "?" + Math.round(new Date().getTime()), function() {
 
 		// Init localized messages
-		localize(arc.deviceLang());
+		localize(arc.device.lang());
 
 		// Init  UI events
 		ui();
@@ -1162,94 +1192,110 @@ function init() {
 		$("#text").data("keyTime", 0);
 
 		// Init captcha-like challenge
-		arc.api("utility_capcha_new", {
+		arc.api({
+			api : "challenge_new",
 			method : "operation",
 			height : 24,
 			color : "444444"
-		}, function(data) {
-			$("#sub-capcha img").attr("src", arc.CAPCHA_PATH + data.data.token + ".png").data("token", data.data.token);
+		}, {
+			success : function(r) {
+				$("#sub-capcha img").attr("src", "data:image/png;base64," + r.data.img).data("token", r.data.token);
+			}
 		});
 
+		// Check GET parameter(s) if any
+		var param = arc.param();
+
 		// If callback initiated by subscribe or password reset => Forward to API server
-		if ((param.api == "user_subscriber_confirm" || param.api == "user_password_confirm" ) && param.tid) {
+		if ((param.api == "callback" ) && param.token) {
+
+			// Clean URL
+			history.replaceState({}, "SafeNote", window.location.href.split("?")[0]);
 
 			// Exit if token already used
-			if (param.tid != arc.cakeGet("tid"))
-				arc.api(param.api, {
-					tid : param.tid
-				}, function(o) {
+			if (param.token != arc.cake.read("token"))
+				arc.api({
+					api : "callback",
+					token : param.token
+				}, {
+					method : "get",
+					success : function(o) {
 
-					// Store the burnt token in local storage in case of reload
-					arc.cakeSet("tid", param.tid, arc.FOREVER);
+						// Store the burnt token in local storage in case of reload
+						arc.cake.write("token", param.token);
 
-					if (o.code != "200") {
+						if (o.code != "200") {
 
-						// Default confirmation error message
-						var msg = o.msg;
+							// Default confirmation error message
+							var msg = o.msg;
 
-						// Localized messages
-						switch(o.code) {
-						case "705":
-							msg = LOCKER.MSG[2][arc.deviceLang()];
-							break;
-						case "600":
-							msg = LOCKER.MSG[3][arc.deviceLang()];
-							break;
+							// Localized messages
+							switch(o.code) {
+							case "641":
+								msg = LOCKER.MSG[2][arc.device.lang()];
+								break;
+							case "651":
+								msg = LOCKER.MSG[3][arc.device.lang()];
+								break;
+							}
+
+							// Error notification
+							$("#notif-msg").html(msg);
+							$("#notif").slideDown(100);
+							return;
 						}
 
-						// Error notification
-						$("#notif-msg").html(msg);
-						$("#notif").slideDown(100);
-						return;
+						// Subscriber confirmed or New password => Close former session
+						arc.cake.erase("uuid");
+						arc.cake.erase("usid");
+						arc.cake.erase("udid");
+						arc.cake.erase("eost");
 					}
-
-					// Subscriber confirmed or New password => Close former session
-					arc.userSessionDelete();
-
-					switch(param.api) {
-					case "user_subscriber_confirm":
-						$("#notif-msg").html(LOCKER.MSG[1][arc.deviceLang()].replace("%%mailid%%", o.data.mailid));
-						$("#login-email").val(o.data.mailid);
-						break;
-					case "user_password_confirm":
-						$("#notif-msg").html(LOCKER.MSG[11][arc.deviceLang()]);
-						break;
-					}
-
-					$("#notif").slideDown(100);
-
-				}, false, "GET");
+				});
 		}
 
 		// Load  user session data if no error (i.e. valid session)
-		if (!arc.apiSession("user_data_get", {}, function(o) {
-				if (o.code != "200") {
+		if (!arc.api({
+				api : "profile_get"
+			}, {
+				session : true,
+				success : function(o) {
+					if (o.code != "200") {
+						$("#public").show();
+						return;
+					}
+
+					// Init local profile
+					profileInit(o.data.profile);
+
+					// Start private UI
+					list();
+					$("#list").slideDown(100);
+
+				},
+				error : function(e) {
+
+					// On error default public section
 					$("#public").show();
-					return;
 				}
-
-				// Valid session => Let's go
-				// Set application data
-				LOCKER.data = JSON.parse(o.data.user_data);
-
-				// Start private UI
-				list();
-				$("#list").slideDown(100);
-
-			}, function(e) {
-
-				// On error default public section
-				$("#public").show();
 			}))
 			// If no local session parameter(s) => Public section
 			$("#public").show();
 	});
 }
 
-// ================================================================================================
-// START EVENT: EITHER jQuery (Web app) OR deviceready (Cordova app)
-// ================================================================================================
+/* ---------------------------------------------------------------------------------
+ * STARTING EVENT: EITHER jQuery (Web app, but not on old IE) OR deviceready (Cordova app)
+ */
 if (document.URL.indexOf('http://') === -1 && document.URL.indexOf('https://') === -1)
 	document.addEventListener('deviceready', init, false);
+else if (document.getElementById("oldie"))
+	window.onload = function() {
+		document.body.innerHTML = "<p style='text-align:center;'>Old versions of Internet Explorer are not supported.<br><br>Les versions anciennes d'Internet Explorer ne sont pas supportées.</p>";
+	};
 else
 	$(init);
+
+/* ---------------------------------------------------------------------------------
+ * EoF
+ */
