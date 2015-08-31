@@ -1,7 +1,7 @@
 AuverCloud SafeNote
 ===
 
-_AuverCloud SafeNote is a simple secured notes web application based on AuverCloud API server. 
+AuverCloud SafeNote is a simple secured notes web application based on AuverCloud API server. 
 It demonstrates how to build a complete application just using client technologies (HTML, JS, CSS) and the AuverCloud API.
 The current version is based on AuverCloud API server and runtime client version 3. 
 AuverCloud SafeNote was formely known as AuverCloud Locker. 
