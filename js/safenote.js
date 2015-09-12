@@ -1,6 +1,6 @@
 /* =================================================================================================
  * AUVERCLOUD SAFENOTE: Secured notes management (formerly KySSME 1.0 then SOS 2.0 then  LOCKER 2.1)
- * Version: 3.1
+ * Version: 3.1a
  *
  * SAFENOTE is a web application that aims at demonstrating how to develop a client/server web application
  * using only client technologies (HTML, CSS, JavaScript, jQuery) and the AuverCloud REST based API server.
@@ -51,8 +51,8 @@ var LOCKER = {
 	// Timer in ms to close an open note automatically. Should be < TTL: 5mn
 	AUTOCLOSE : 300000,
 	RELEASE : {
-		"en" : "Version 3.1 - August 31, 2015",
-		"fr" : "Version 3.1 - Août 2015",
+		"en" : "Version 3.1a - September 12, 2015",
+		"fr" : "Version 3.1a - 12 septembre 2015",
 	},
 	ITEM : "<tr class='item' id='%%id%%'><td><div class='icon-arrow-up'></div><div class='icon-arrow-down'></div></td><td><div class='item-name'><input disabled type='text' placeholder='%%ph%%' value='%%name%%' maxlength='64'></div><div class='item-mask'></div><div class='item-time' locker-time='%%time%%'>%%date%%</div><div class='item-del'></div></td><td class='icon-cancel-circle'></td></tr>"
 
@@ -1212,9 +1212,6 @@ else
 			// Check GET parameter(s) if any
 			var param = arc.param();
 
-			// Hide Load UI
-			$("#load").hide();
-
 			// If callback initiated by subscribe or password reset => Forward to API server
 			if ((param.api == "callback" ) && param.token) {
 
@@ -1271,6 +1268,7 @@ else
 					success : function(o) {
 						if (o.code != "200") {
 							$("#public").show();
+							$("#load").fadeOut();
 							return;
 						}
 
@@ -1286,10 +1284,12 @@ else
 
 						// On error default public section
 						$("#public").show();
+						$("#load").fadeOut();
 					}
 				}))
 				// If no local session parameter(s) => Public section
 				$("#public").show();
+				$("#load").fadeOut();
 		});
 	});
 
