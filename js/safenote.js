@@ -1,6 +1,6 @@
 /* =================================================================================================
  * AUVERCLOUD SAFENOTE: Secured notes management (formerly KySSME 1.0 then SOS 2.0 then  LOCKER 2.1)
- * Version: 3.1a
+ * Version: 3.1c
  *
  * SAFENOTE is a web application that aims at demonstrating how to develop a client/server web application
  * using only client technologies (HTML, CSS, JavaScript, jQuery) and the AuverCloud REST based API server.
@@ -51,8 +51,8 @@ var LOCKER = {
 	// Timer in ms to close an open note automatically. Should be < TTL: 5mn
 	AUTOCLOSE : 300000,
 	RELEASE : {
-		"en" : "Version 3.1a - September 12, 2015",
-		"fr" : "Version 3.1a - 12 septembre 2015",
+		"en" : "Version 3.1c - September 25, 2015",
+		"fr" : "Version 3.1c - 25 septembre 2015",
 	},
 	ITEM : "<tr class='item' id='%%id%%'><td><div class='icon-arrow-up'></div><div class='icon-arrow-down'></div></td><td><div class='item-name'><input disabled type='text' placeholder='%%ph%%' value='%%name%%' maxlength='64'></div><div class='item-mask'></div><div class='item-time' locker-time='%%time%%'>%%date%%</div><div class='item-del'></div></td><td class='icon-cancel-circle'></td></tr>"
 
@@ -1158,6 +1158,137 @@ function autoclose() {
 }
 
 /* ---------------------------------------------------------------------------------
+ * Function: init
+ * Purpose: Application initialization
+ * Return: N/A
+ */
+function init() {
+	// Merge default AuverCloud data with LOCKER specific application data
+	arc = $.extend({}, arc, {
+		// Debug mode
+		DEBUG : false,
+		// Set Application key. MUST for any server API call
+		APP_KEY : "43a2348027cdb8d216f4fb15fd9e1e4f53a93ef40b65f",
+		// Application name for local storage
+		APP_NAME : "SafeNote",
+	});
+
+	// Generic AuverCloud UI utilities
+	web();
+
+	// Load localized messages
+	$.getScript("js/safenote-msg.js" + "?" + Math.round(new Date().getTime()), function() {
+
+		// Init localized messages
+		localize(arc.device.lang());
+
+		// Init  UI events
+		ui();
+
+		// Start autoclose loop
+		autoclose();
+
+		// Init key TTL
+		$("#text").data("keyLive", false);
+		$("#text").data("keyTime", 0);
+
+		// Init captcha-like challenge
+		arc.api({
+			api : "challenge_new",
+			method : "operation",
+			height : 24,
+			color : "444444"
+		}, {
+			success : function(r) {
+				$("#sub-capcha img").attr("src", "data:image/png;base64," + r.data.img).data("token", r.data.token);
+			}
+		});
+
+		// Check GET parameter(s) if any
+		var param = arc.param();
+
+		// If callback initiated by subscribe or password reset => Forward to API server
+		if ((param.api == "callback" ) && param.token) {
+
+			// Clean URL
+			history.replaceState({}, "SafeNote", window.location.href.split("?")[0]);
+
+			// Exit if token already used
+			if (param.token != arc.cake.read("token"))
+				arc.api({
+					api : "callback",
+					token : param.token
+				}, {
+					method : "get",
+					success : function(o) {
+
+						// Store the burnt token in local storage in case of reload
+						arc.cake.write("token", param.token);
+
+						if (o.code != "200") {
+
+							// Default confirmation error message
+							var msg = o.msg;
+
+							// Localized messages
+							switch(o.code) {
+							case "641":
+								msg = LOCKER.MSG[2][arc.device.lang()];
+								break;
+							case "651":
+								msg = LOCKER.MSG[3][arc.device.lang()];
+								break;
+							}
+
+							// Error notification
+							$("#notif-msg").html(msg);
+							$("#notif").slideDown(100);
+							return;
+						}
+
+						// Subscriber confirmed or New password => Close former session
+						arc.cake.erase("uuid");
+						arc.cake.erase("usid");
+						arc.cake.erase("udid");
+						arc.cake.erase("eost");
+					}
+				});
+		}
+
+		// Load  user session data if no error (i.e. valid session)
+		if (!arc.api({
+				api : "profile_get"
+			}, {
+				session : true,
+				success : function(o) {
+					if (o.code != "200") {
+						$("#public").show();
+						$("#load").fadeOut();
+						return;
+					}
+
+					// Init local profile
+					profileInit(o.data.profile);
+
+					// Start private UI
+					list();
+					$("#list").slideDown(100);
+
+				},
+				error : function(e) {
+
+					// On error default public section
+					$("#public").show();
+					$("#load").fadeOut();
+				}
+			}))
+			// If no local session parameter(s) => Public section
+			$("#public").show();
+		$("#load").fadeOut();
+	});
+}
+
+/* ---------------------------------------------------------------------------------
  * EVERYTHING STARTS HERE!:EITHER jQuery (Web app, but not on old IE) OR deviceready (Cordova app)
  */
 if (document.URL.indexOf('http://') === -1 && document.URL.indexOf('https://') === -1)
@@ -1167,131 +1298,7 @@ else if (document.getElementById("oldie"))
 		document.body.innerHTML = "<p style='text-align:center;'>Old versions of Internet Explorer are not supported.<br><br>Les versions anciennes d'Internet Explorer ne sont pas supportées.</p>";
 	};
 else
-	$(function() {
-		// Merge default AuverCloud data with LOCKER specific application data
-		arc = $.extend({}, arc, {
-			// Debug mode
-			DEBUG : false,
-			// Set Application key. MUST for any server API call
-			APP_KEY : "43a2348027cdb8d216f4fb15fd9e1e4f53a93ef40b65f",
-			// Application name for local storage
-			APP_NAME : "SafeNote",
-		});
-
-		// Generic AuverCloud UI utilities
-		web();
-
-		// Load localized messages
-		$.getScript("js/safenote-msg.js" + "?" + Math.round(new Date().getTime()), function() {
-
-			// Init localized messages
-			localize(arc.device.lang());
-
-			// Init  UI events
-			ui();
-
-			// Start autoclose loop
-			autoclose();
-
-			// Init key TTL
-			$("#text").data("keyLive", false);
-			$("#text").data("keyTime", 0);
-
-			// Init captcha-like challenge
-			arc.api({
-				api : "challenge_new",
-				method : "operation",
-				height : 24,
-				color : "444444"
-			}, {
-				success : function(r) {
-					$("#sub-capcha img").attr("src", "data:image/png;base64," + r.data.img).data("token", r.data.token);
-				}
-			});
-
-			// Check GET parameter(s) if any
-			var param = arc.param();
-
-			// If callback initiated by subscribe or password reset => Forward to API server
-			if ((param.api == "callback" ) && param.token) {
-
-				// Clean URL
-				history.replaceState({}, "SafeNote", window.location.href.split("?")[0]);
-
-				// Exit if token already used
-				if (param.token != arc.cake.read("token"))
-					arc.api({
-						api : "callback",
-						token : param.token
-					}, {
-						method : "get",
-						success : function(o) {
-
-							// Store the burnt token in local storage in case of reload
-							arc.cake.write("token", param.token);
-
-							if (o.code != "200") {
-
-								// Default confirmation error message
-								var msg = o.msg;
-
-								// Localized messages
-								switch(o.code) {
-								case "641":
-									msg = LOCKER.MSG[2][arc.device.lang()];
-									break;
-								case "651":
-									msg = LOCKER.MSG[3][arc.device.lang()];
-									break;
-								}
-
-								// Error notification
-								$("#notif-msg").html(msg);
-								$("#notif").slideDown(100);
-								return;
-							}
-
-							// Subscriber confirmed or New password => Close former session
-							arc.cake.erase("uuid");
-							arc.cake.erase("usid");
-							arc.cake.erase("udid");
-							arc.cake.erase("eost");
-						}
-					});
-			}
-
-			// Load  user session data if no error (i.e. valid session)
-			if (!arc.api({
-					api : "profile_get"
-				}, {
-					session : true,
-					success : function(o) {
-						if (o.code != "200") {
-							$("#public").show();
-							$("#load").fadeOut();
-							return;
-						}
-
-						// Init local profile
-						profileInit(o.data.profile);
-
-						// Start private UI
-						list();
-						$("#list").slideDown(100);
-
-					},
-					error : function(e) {
-
-						// On error default public section
-						$("#public").show();
-						$("#load").fadeOut();
-					}
-				}))
-				// If no local session parameter(s) => Public section
-				$("#public").show();
-				$("#load").fadeOut();
-		});
-	});
+	$(init);
 
 /* ---------------------------------------------------------------------------------
  * EoF
