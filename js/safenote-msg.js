@@ -228,11 +228,18 @@ LOCKER.MSG = [{
 	"id" : "passwordOK",
 	"en" : "PASSWORD",
 	"fr" : "MOT DE PASSE"
-}, {
+}, /*
+ {
+ "static" : true,
+ "id" : "publicFooter",
+ "en" : "Terms of service are available at <a target='_blank' href='https://www.auvercloud.com/terms.html'>here</a>.<br>Notes are secured with <a target='_blank' href='http://en.wikipedia.org/wiki/Advanced_Encryption_Standard'>AES</a> and <a target='_blank' href='http://en.wikipedia.org/wiki/Transport_Layer_Security'>SSL</a>.<br>The source code is on <a target='_blank' href='https://github.com/auvercloud/safenote'>GitHub</a>.",
+ "fr" : "Les conditions du service sont disponibles <a target='_blank' href='https://www.auvercloud.fr/terms.html'>ici</a>.<br>Les notes sont sécurisées avec <a target='_blank' href='http://fr.wikipedia.org/wiki/Advanced_Encryption_Standard'>AES</a> et <a target='_blank' href='http://fr.wikipedia.org/wiki/Transport_Layer_Security'>SSL</a>.<br>Le code source est sur <a target='_blank' href='https://github.com/auvercloud/safenote'>GitHub</a>."
+ },*/
+{
 	"static" : true,
 	"id" : "publicFooter",
-	"en" : "Terms of service are available at <a target='_blank' href='https://www.auvercloud.com/terms.html'>here</a>.<br>Notes are secured with <a target='_blank' href='http://en.wikipedia.org/wiki/Advanced_Encryption_Standard'>AES</a> and <a target='_blank' href='http://en.wikipedia.org/wiki/Transport_Layer_Security'>SSL</a>.<br>The source code is on <a target='_blank' href='https://github.com/auvercloud/safenote'>GitHub</a>.",
-	"fr" : "Les conditions du service sont disponibles <a target='_blank' href='https://www.auvercloud.fr/terms.html'>ici</a>.<br>Les notes sont sécurisées avec <a target='_blank' href='http://fr.wikipedia.org/wiki/Advanced_Encryption_Standard'>AES</a> et <a target='_blank' href='http://fr.wikipedia.org/wiki/Transport_Layer_Security'>SSL</a>.<br>Le code source est sur <a target='_blank' href='https://github.com/auvercloud/safenote'>GitHub</a>."
+	"en" : "Terms of service are available at <a target='_blank' href='https://www.auvercloud.com/terms.html'>here</a>.<br>The source code is on <a target='_blank' href='https://github.com/auvercloud/safenote'>GitHub</a>.",
+	"fr" : "Les conditions du service sont disponibles <a target='_blank' href='https://www.auvercloud.fr/terms.html'>ici</a>.<br>Le code source est sur <a target='_blank' href='https://github.com/auvercloud/safenote'>GitHub</a>."
 }, {
 	"static" : true,
 	"id" : "helpLogout",
