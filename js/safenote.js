@@ -1163,7 +1163,7 @@ function autoclose() {
  * Return: N/A
  */
 function init() {
-	// Merge default AuverCloud data with LOCKER specific application data
+	// Merge default AuverCloud data with SAFENOTE specific application data
 	arc = $.extend({}, arc, {
 		// Debug mode
 		DEBUG : false,
