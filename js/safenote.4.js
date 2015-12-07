@@ -59,9 +59,6 @@ var safenote = {
 	TTL : 600000,
 	// Timer in ms to close an open note automatically (5mn). After this time any detailed view of notes is closed.
 	AUTOCLOSE : 300000,
-	// HTML5 cache progress: loaded and total (declarative values are required for Firefox users)
-	CACHE_TOTAL : 116,
-	cache_loaded : 0,
 	// Current language: Undefined on start
 	lang : false,
 	// Context: web or native (ex. Cordova)
