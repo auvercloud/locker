@@ -1,0 +1,47 @@
+/* ************************************************************************
+ * SAFENOTE 4.0 - LANDSCAPE CSS
+ * ************************************************************************/
+#landscape {
+	display: none;
+	background-size: cover;
+	background-position: center center;
+	background-image: url('../media/cloud_above.jpg');
+	z-index: 9000;
+}
+@media screen and (min-aspect-ratio: 13/9) and (max-width: 768px) {
+	#landscape {
+		display: table;
+	}
+}
+#landscape .inner {
+	background-image: url('../img/overlay_01_lite.png');
+	background-repeat: repeat;
+}
+#landscape > div > div {
+	margin: 0 auto;
+	width: 320px;
+	height: 240px;
+	background-position: center center;
+	background-size: contain;
+}
+#landscape.fr > div > div {
+	background-image: url('../img/turn-fr.png');
+}
+#landscape.en > div > div {
+	background-image: url('../img/turn-en.png');
+}
+/* Animation */
+.rotate-foverer {
+	animation: rotate 2s linear infinite;
+}
+
+@keyframes rotate {
+0% {transform: rotate(0deg);}
+25% {transform: rotate(10deg);}
+50% {transform: rotate(0deg);}
+75% {transform: rotate(-10deg);}
+100% {transform: rotate(0deg);}
+}
+/* ************************************************************************
+ * EoF
+ * ************************************************************************/

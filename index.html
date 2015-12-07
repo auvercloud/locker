@@ -5,16 +5,16 @@
 <!--[if IE 9]>     <html id="oldie"> <![endif]-->
 <!--[if gt IE 9]>  <html> <![endif]-->
 <!--[if !IE]><!-->
-<html  manifest="safenote.manifest">
+<html>
 	<!--<![endif]-->
-	<head>
-		<title>SafeNote AuverCloud</title>
-		<meta name="description" content="AuverCloud SafeNote - Open Source secured notes manager.">
+	<head manifest="nocache.manifest">
+		<title>SafeNote</title>
+		<meta charset="utf-8" />
 
-		<meta http-equiv="content-type" content="text/xml; charset=utf-8" />
+		<!-- Open sourced on https://github.com/auvercloud/safenote -->
 
 		<!-- FB -->
-		<meta property="og:title" content="AuverCloud SafeNote" />
+		<meta property="og:title" content="SafeNote AuverCloud" />
 		<meta property="og:image" content="https://www.auvercloud.com/app/safenote/res/store/icon-0512.png" />
 		<meta property="og:image:type" content="image/png" />
 		<meta property="og:image:width" content="512" />
@@ -51,340 +51,400 @@
 		<link rel="shortcut icon" type="image/x-icon" href="img/safenote.ico" />
 
 		<!-- LIB CSS -->
-		<link type="text/css" rel="stylesheet" href= "sancy/lib/icomoon/icomoon.min.css" />
-		<link type="text/css" rel="stylesheet" href= "sancy/lib/normalize/normalize.css" />
-		<link type="text/css" rel="stylesheet" href= "sancy/lib/jquery/tooltipster/tooltipster.css" />
+		<link type="text/css" rel="stylesheet" href= "lib/icomoon/icomoon.css" />
+		<link type="text/css" rel="stylesheet" href= "lib/normalize/normalize.css" />
+		<link type="text/css" rel="stylesheet" href= "lib/jquery/tooltipster/tooltipster.css" />
 
 		<!-- LIB JS -->
-		<script src="sancy/lib/jquery/jquery-2.1.4.min.js"></script>
-		<script src="sancy/lib/jquery/mobile/jquery.mobile.custom.min.js"></script>
-		<script src="sancy/lib/jquery/tooltipster/jquery.tooltipster.min.js"></script>
-		<script src="lib/crypto.min.js"></script>
+		<script src="lib/jquery/jquery-2.1.4.min.js"></script>
+		<script src="lib/jquery/mobile/jquery.mobile.custom.min.js"></script>
+		<script src="lib/jquery/tooltipster/jquery.tooltipster.min.js"></script>
+		<script src="lib/jquery/sortable/Sortable.min.js"></script>
+		<script src="lib/crypto/crypto.min.js"></script>
 
-		<!-- AUVERCLOUD RUNTIME  -->
-		<link type="text/css" rel="stylesheet" href= "run/css/arc.3.css" />
+		<!-- AUVERCLOUD RUNTIME -->
 		<script src="run/min/arc.3.min.js"></script>
+		<link type="run/css/arc.3.css" />
 
-		<!-- AUVERCLOUD LIB AND UI -->
-		<link type="text/css" rel="stylesheet" href= "sancy/css/auvercloud.css" />
-		<script src="sancy/js/lib.min.js"></script>
+		<!-- SAFENOTE CSS -->
+		<link type="text/css" rel="stylesheet" href= "css/safenote-portrait.css" />
+		<link type="text/css" rel="stylesheet" href= "css/safenote-landscape.css" />
 
-		<!-- SAFENOTE -->
-		<link type="text/css" rel="stylesheet" href= "css/safenote.css" />
-		<script type="text/javascript" src="js/safenote.js"></script>
+		<!-- SAFENOTE JS -->
+		<script src="js/lib.4.js"></script>
+		<script src="js/safenote.4.js"></script>
+		<script src="js/local.4.js"></script>
 
+		<!-- CORDOVA
+		<script type="text/javascript" src="cordova.js"></script> -->
 	</head>
+	<!-- Empty event enable touch fx -->
 	<body ontouchstart="" onmouseover="">
-		<section id="notif">
-			<table>
-				<tr>
-					<td id="notif-msg"></td>
-					<td ><div class="icon-notif icon-cancel-circle2"></div></td>
-				</tr>
-			</table>
-		</section>
-		<section id="public">
-			<div class="module" id="brand">
-				<img id="logo" src="img/safenote.png" width="40" height="40">
-				<span class="yellow-dark">safenote </span><span id="app-name" class="blue" >auvercloud</span>
-				<img class="tooltip" id="langEn" src="img/flag.en.32x32.png" width="20" height="20">
-				<img class="tooltip" id="langFr" src="img/flag.fr.32x32.png" width="20" height="20">
-			</div>
-			<div class="module" id="login">
-				<h3 id="loginTitle"></h3>
-				<div id="usr">
-					<div id="loginEmail" class="label"></div>
-					<table class="input border-grey">
-						<tr>
-							<td class="icon-user7 color-gray"></td>
-							<td>
-							<input id="login-email" type="email" autocomplete="on">
-							</td>
-						</tr>
-						<tr>
-							<td></td>
-							<td class="input-error"></td>
-						</tr>
-					</table>
+		<!-- INTRODUCTION SEQUENCE -->
+		<div id="intro" class="fullscreen">
+			<video id="video-cloud" class="video-bg fullscreen">
+				<source src="media/cloud_above.mp4" type="video/mp4" preload="auto">
+				Your browser does not support the video tag...
+			</video>
+			<div id ="screen-anim" class="fullscreen screen outer">
+				<div id="intro-anim" class="inner">
+					<!-- ENGLISH AND FRENCH HYPE 3 ANIMATIONS -->
+					<div id="safenoteen_hype_container" aria-live="polite">
+						<script src="ani/safenote_EN.hyperesources/safenoteen_hype_generated_script.js?22146"></script>
+					</div>
+					<div id="safenotefr_hype_container"  aria-live="polite">
+						<script src="ani/safenote_FR.hyperesources/safenotefr_hype_generated_script.js?22146"></script>
+					</div>
 				</div>
-				<div id="pwd">
-					<div id="loginPwd"  class="label"></div>
-					<table class="input border-grey">
-						<tr>
-							<td class="icon-key color-gray"></td>
-							<td>
-							<input  id="login-pwd" type="password" pattern="[0-9]*" inputmode="numeric">
-							</td>
-						</tr>
-						<tr>
-							<td></td>
-							<td><div class="input-error"></div></td>
-						</tr>
-					</table>
-				</div>
-				<table class="bar-btn">
-					<tr>
-						<td class="bar-error" id="login-error"></td>
-						<td class="btns"><div id="loginOK"class="btn no-select"></div></td>
-					</tr>
-				</table>
-				<br>
-			</div>
-			<div class="module" id="subscribe">
-				<h3 id="subscribeTitle"></h3>
-				<div id="sub-email">
-					<div id="subscribeEmail" class="label"></div>
-					<table class="input border-grey">
-						<tr>
-							<td class="icon-key color-gray"></td>
-							<td>
-							<input id="subscribe-mailid" type="email">
-							</td>
-						</tr>
-						<tr>
-							<td></td>
-							<td class="input-error"></td>
-						</tr>
-					</table>
-				</div>
-				<div id="sub-capcha">
-					<div id="subscribeCapcha" class="label"></div>
-					<table class="input border-grey">
-						<tr>
-							<td id="capcha-refresh" class="icon-loop3"><img src="" height="24" width="144"></td>
-							<td>
-							<input id="subscribe-capcha" type="number" pattern="[0-9]*" inputmode="numeric">
-							</td>
-						</tr>
-						<tr>
-							<td></td>
-							<td><div class="input-error"></div></td>
-						</tr>
-					</table>
-				</div>
-				<table class="bar-btn">
-					<tr>
-						<td class="bar-error" id="subscribe-error"></td>
-						<td class="btns"><div id="subscribeOK" class="btn no-select"></div><div id="passwordOK"class="btn no-select"></div></td>
-					</tr>
-				</table>
-				<br>
-			</div>
-			<div class="module" id="publicNotes">
-				<br>
-				<br>
-				<div id="publicFooter"></div>
-				<div id="publicRelease"></div>
-				<br>
-				<br>
-			</div>
-		</section>
-		<section id="list">
-			<div class="bar-head">
-				<div id="logout" class="btn icon-switch"></div>
-				<div id="pwd-toggle" class="btn icon-key"></div>
-				<div id="print-btn" class="btn icon-printer4"></div>
-				<div id="note-new" class="btn icon-plus2"></div>
-				<div id="note-search">
-					<div class="icon-search"></div>
-					<input type="text">
+				<div id="intro-pass">
+					<div id="btn_intro" class="hover btn dark">
+						continue
+					</div>
 				</div>
 			</div>
-			<div class="module" id="pwd-new">
-				<br>
-				<h3 id="pwdNew"></h3>
-				<div id="pwd1">
-					<div class="label" id="pwdNew1"></div>
-					<table class="input border-grey">
-						<tr>
-							<td class="icon-key color-gray"></td>
-							<td>
-							<input type="password" id="pwd-input1" inputmode="numeric">
-							</td>
-						</tr>
-						<tr>
-							<td></td>
-							<td class="input-error"></td>
-						</tr>
-					</table>
-				</div>
-				<div id="pwd2">
-					<div class="label" id="pwdNew2"></div>
-					<table class="input border-grey">
-						<tr>
-							<td class="icon-key color-gray"></td>
-							<td>
-							<input type="password" id="pwd-input2" inputmode="numeric">
-							</td>
-						</tr>
-						<tr>
-							<td></td>
-							<td><div class="input-error"></div></td>
-						</tr>
-					</table>
-				</div>
-				<table class="bar-btn">
-					<tr>
-						<td class="bar-error" id="pwd-new-error"></td>
-						<td class="btns"><div class="btn no-select w60" id="pwdNewStore"></div><div class="btn no-select w60 color-yellow-dark" id="pwdNewCancel"></div></td>
-					</tr>
-				</table>
-				<br>
-			</div>
-			<div class="module" id="list-empty">
-				<div>
-					<div class="icon-arrow-up12"></div>
-					<span class="emptext" id="helpLogout"></span>
-				</div>
-				<div>
-					<div class="icon-arrow-up12"></div>
-					<span class="emptext" id="helpNote"></span>
-				</div>
-				<div>
-					<div class="icon-arrow-up12"></div>
-					<span class="emptext" id="helpSearch"></span>
-				</div>
-				<div class="clear"></div>
-			</div>
-			<table class="module" id="list-full"></table>
-
-			<div class="module" style="height:20px;background:#fff;"></div>
-		</section>
-		<section id="text">
-			<div class="module" id="toolbar">
-				<table>
-					<tr>
-						<td class="tool-default icon-text-color"></td>
-						<td class="tool-bold icon-bold2"></td>
-						<td class="tool-under icon-underline2"></td>
-						<td class="tool-ital icon-italic2"></td>
-						<td class="tool-color icon-square" style='color:#000'    id="col-black" ></td>
-						<td class="tool-color icon-square" style='color:#888'    id="col-grey"  ></td>
-						<td class="tool-color icon-square" style='color:#a00'    id="col-red"   ></td>
-						<td class="tool-color icon-square" style='color:#0a0'    id="col-green" ></td>
-						<td class="tool-color icon-square" style='color:#08A1D9' id="col-blue"  ></td>
-						<td class="tool-color icon-square" style='color:#FFCC00' id="col-yellow"></td>
-						<td class="tool-color icon-square" style='color:#800080' id="col-purple"></td>
-						<td class="tool-less icon-indent-decrease2"></td>
-						<td class="tool-more icon-indent-increase2"></td>
-						<td class="tool-left icon-paragraph-left2"></td>
-						<td class="tool-center icon-paragraph-center2"></td>
-						<td class="tool-right icon-paragraph-right2"></td>
-						<td class="tool-justify icon-paragraph-justify2"></td>
-						<td class="tool-bullet icon-list"></td>
-						<td class="tool-number icon-list-numbered"></td>
-						<td class="tool-line icon-minus3"></td>
-
-					</tr>
-				</table>
-			</div>
-			<table class="bar-head" id="bar-text">
-				<tr>
-					<td><div class="btn icon-arrow-left"></div></td>
-					<td>
-					<div>
-						<span></span>
-					</div><div></div></td><td></td>
-				</tr>
-			</table>
-			<div class="module" id="key-new">
-				<br>
-				<h3 id="keyCreate"></h3>
-				<div id="key1">
-					<div class="label" id="keyNew1"></div>
-					<table class="input border-grey">
-						<tr>
-							<td class="icon-key5 color-gray"></td></td>
-							<td>
-							<input type="text" id="key-input1">
-							</td>
-						</tr>
-						<tr>
-							<td></td>
-							<td class="input-error"></td>
-						</tr>
-					</table>
-				</div>
-				<div id="key2">
-					<div class="label" id="keyNew2"></div>
-					<table class="input border-grey">
-						<tr>
-							<td class="icon-key5 color-gray"></td></td>
-							<td>
-							<input type="text" id="key-input2">
-							</td>
-						</tr>
-						<tr>
-							<td></td>
-							<td><div class="input-error"></div></td>
-						</tr>
-					</table>
-				</div>
-				<table class="bar-btn">
-					<tr>
-						<td class="bar-error" id="key-new-error"></td>
-						<td class="btns"><div class="btn no-select w60" id="keyNewStore"></div></td>
-					</tr>
-				</table>
-				<br>
-			</div>
-			<div class="module" id="key-enter">
-				<br>
-				<h3 id="keyInput"></h3>
-				<div class="label" id="keyIdle"></div>
-				<div id="key">
-					<table class="input border-grey">
-						<tr>
-							<td class="icon-key5 color-gray"></td></td>
-							<td>
-							<input type="password" id="key-input">
-							</td>
-						</tr>
-						<tr>
-							<td></td>
-							<td class="input-error"></td>
-						</tr>
-					</table>
-				</div>
-				<table class="bar-btn">
-					<tr>
-						<td class="bar-error" id="key-error"></td>
-						<td class="btns"><div  class="btn no-select w60" id="keyEnter"></div></td>
-					</tr>
-				</table>
-				<br>
-			</div>
-			<div class="module" id="text-edit">
-				<div id="text-content" contenteditable="true"></div>
-				<div id="text-empty" class="icon-lock5"></div>
-				<div></div>
-			</div>
-		</section>
-		<section id="print">
-			<table class="bar-head">
-				<tr>
-					<td class="icon-exit3"></td>
-				</tr>
-			</table>
-			<div id="print-list">
-				Hello
-			</div>
-		</section>
-		<div id="load">
-			<table>
-				<tr>
-					<td>SafeNote</td>
-				</tr>
-			</table>
 		</div>
+		<!-- STANDARD PORTRAIT APP -->
+		<div id="portrait">
+			<!-- PUBLIC SECTION -->
+			<section id="public" class="fullscreen outer">
+				<div class="inner">
+					<div id="app-name">
+						<img src="img/safenote.png">
+						SafeNote
+					</div>
+					<form id="form-signin">
+						<fieldset class="before-bar">
+							<legend id="legend_signin">
+								signin
+							</legend>
+							<div id="label_signin_email" class="input-label">
+								email ID
+							</div>
+							<div class="input-wrapper hover">
+								<span id="tip_signin_email" class="input-icon icon-mailbox tooltip"></span>
+								<input id="signin-email" type="email">
+							</div>
+							<div id="label_signin_pwd" class="input-label">
+								Password
+							</div>
+							<div class="input-wrapper hover">
+								<span id="tip_signin_pwd" class="input-icon icon-key tooltip"></span>
+								<input id="signin-pwd" type="password" pattern="[0-9]*" inputmode="numeric">
+
+							</div>
+							<div class="form-error"></div>
+
+						</fieldset>
+						<div class="form-bar">
+							<div id="btn_signin" class="hover btn blue ok"></div>
+						</div>
+					</form>
+					<p id="btn-to-signup" class="center">
+						<span id="btn_form_signup" class="btn blue hover"> signup </span>
+					</p>
+					<form id="form-signup">
+						<fieldset class="before-bar">
+							<legend id="legend_signup">
+								signup
+							</legend>
+							<div id="label_signup_email" class="input-label">
+								email ID
+							</div>
+							<div class="input-wrapper hover">
+								<span id="tip_signup_email" class="input-icon icon-mailbox tooltip"></span>
+								<input id="signup-email" type="email">
+							</div>
+							<div id="label_signup_challenge" class="input-label">
+								Challenge
+							</div>
+							<div class="input-wrapper hover">
+								<span id="tip_signup_challenge" class="input-icon icon-loop3 tooltip challenge"><img></span>
+								<input id="signup-challenge" type="number" pattern="\d*">
+							</div>
+							<div class="form-error"></div>
+
+						</fieldset>
+						<div class="form-bar">
+							<div id="btn_signup" class="hover btn double blue">
+								signup
+							</div>
+							<div id="btn_reset" class="hover btn double blue">
+								reset
+							</div>
+						</div>
+					</form>
+					<p id="btn-to-signin" class="center">
+						<span id="btn_form_signin" class="btn blue hover"> signin </span>
+					</p>
+					<p id="show-intro">
+						<span class="icon-checkbox-checked checkmark"></span>
+						<span id="show_intro"></span>
+					</p>
+				</div>
+			</section>
+			<!-- PRIVATE SECTION -->
+			<section id="private" class="fullscreen">
+				<!-- PRIVATE HEADER -->
+				<div id="head" class="center relative">
+					<div id="toolbar">
+						<div class="tool-default icon-text-color"></div>
+						<div class="tool-bold icon-bold2"></div>
+						<div class="tool-under icon-underline2"></div>
+						<div class="tool-ital icon-italic2"></div>
+						<div class="tool-color icon-square" style='color:#000'    id="col-black" ></div>
+						<div class="tool-color icon-square" style='color:#888'    id="col-grey"  ></div>
+						<div class="tool-color icon-square" style='color:#a00'    id="col-red"   ></div>
+						<div class="tool-color icon-square" style='color:#0a0'    id="col-green" ></div>
+						<div class="tool-color icon-square" style='color:#08A1D9' id="col-blue"  ></div>
+						<div class="tool-color icon-square" style='color:#FFCC00' id="col-yellow"></div>
+						<div class="tool-color icon-square" style='color:#800080' id="col-purple"></div>
+						<div class="tool-less icon-indent-decrease2"></div>
+						<div class="tool-more icon-indent-increase2"></div>
+						<div class="tool-left icon-paragraph-left2"></div>
+						<div class="tool-center icon-paragraph-center2"></div>
+						<div class="tool-right icon-paragraph-right2"></div>
+						<div class="tool-justify icon-paragraph-justify2"></div>
+						<div class="tool-bullet icon-list"></div>
+						<div class="tool-number icon-list-numbered"></div>
+						<div class="tool-line icon-minus3"></div>
+					</div>
+					<div id="head-left">
+						<div class="icon-menu7  btn dark hover" id="btn-menu"></div>
+					</div>
+					<div id="head-right">
+						<div class="icon-plus-circle2 btn dark hover" id="btn-plus"></div>
+						<div class="icon-exit btn dark hover" id="btn-back"></div>
+					</div>
+				</div>
+				<!-- PRIVATE SIDE MENU -->
+				<ul id="menu" class="side-menu scrollable">
+					<li class="center">
+						<img id="menu-title" src="img//safenote-small.png">
+					</li>
+					<li id="side-signout" class="btn dark hover">
+						<span class="icon icon-switch">&nbsp;</span><span id="txt_signout"></span>
+					</li>
+					<li id="side-print" class="btn dark hover">
+						<span class="icon icon-printer4">&nbsp;</span><span id="txt_print"></span>
+					</li>
+					<li id="side-pref" class="btn dark hover">
+						<span class="icon icon-cog">&nbsp;</span><span id="txt_pref"></span>
+					</li>
+					<li id="side-faq" class="btn dark hover">
+						<span class="icon icon-info">&nbsp;</span><span id="txt_faq"></span>
+					</li>
+					<li id="about">
+						<div id="txt_designed"></div>
+						<img src="img/auvercloud-512x400.png">
+						<div id="auvercloud">
+							AuverCloud
+						</div>
+					</li>
+				</ul>
+				<!-- APP MAIN UI -->
+				<div id="main">
+					<!-- DEFAULT INTRO ON EMPTY NOTE LIST -->
+					<div id="empty" class="outer relative">
+						<div class="inner center">
+							<span class="icon-file-text2"></span>
+						</div>
+						<div id="discover-menu">
+							<div class="icon-point-up"></div>
+							<div id="discover_menu"></div>
+						</div>
+						<div id="discover-plus">
+							<div class="icon-point-up"></div>
+							<div id="discover_plus"></div>
+						</div>
+					</div>
+					<!-- SCROLLABLE APPLICATION LIST AND MESSAGE EDIT -->
+					<div id="regular" class="scrollable">
+						<div class="container">
+							<!-- MESSAGE LIST -->
+							<ul id="list">
+								<li>
+									<div class='item-handler icon-sort2 hover'></div>
+									<div class='item-entry hover'>
+										<div class='item-name'></div>
+										<div class='item-time'>
+											<span class='icon-clock3'></span><span class='item-update'></span>
+										</div>
+									</div>
+									<div class='item-delete icon-cancel-circle hover'></div>
+								</li>
+								<li>
+
+								</li>
+								<li>
+									Note 2
+								</li>
+							</ul>
+							<!-- MESSAGE EDIT: CLOSED (DEFAULT) AND OPEN -->
+							<div id="note">
+								<div id="note-closed">
+									<span class="icon-file-text2"></span>
+								</div>
+								<div id="note-open">
+									<form id="note-edit">
+										<div class="input-label">
+											<span id="tip_note_name" class="icon-price-tag4 label-tip tooltip hover">&nbsp;</span><span id="label_name"></span><span id="error-subject" class="label-error"></span>
+										</div>
+										<div class="input-wrapper hover fullinput">
+											<input id="note-name" type="text">
+										</div>
+										<div class="input-label">
+											<span id="tip_note_content" class="icon-file-text3  label-tip tooltip hover">&nbsp;</span><span id="label_content"></span><span id="error-content" class="label-error"></span>
+										</div>
+										<div id="note-content" class="textarea" contenteditable="true"></div>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- SCROLLABLE PREFERENCES -->
+					<div id="pref" class="scrollable">
+						<div class="container">
+							<div class="full">
+								<form id="form-password">
+									<fieldset class="before-bar">
+										<legend id="legend_password">
+											signin
+										</legend>
+										<div id="label_password1" class="input-label">
+											email ID
+										</div>
+										<div class="input-wrapper hover">
+											<span class="input-icon icon-key"></span>
+											<input id="password-input1" type="password" pattern="[0-9]*" inputmode="numeric">
+										</div>
+										<div id="label_password2" class="input-label">
+											Password
+										</div>
+										<div class="input-wrapper hover">
+											<span class="input-icon icon-key"></span>
+											<input id="password-input2" type="password" pattern="[0-9]*" inputmode="numeric">
+
+										</div>
+										<div class="form-error"></div>
+
+									</fieldset>
+									<div class="form-bar">
+										<div class="success green icon-checkmark"></div>
+										<div id="btn_password" class="hover btn blue ok"></div>
+									</div>
+								</form>
+								<br>
+								<form id="form-unsubscribe">
+									<fieldset>
+										<legend id="legend_unsubscribe">
+											unsub
+										</legend>
+										<div id="label_unsubscribe" class="input-label justify">
+											bla bla
+										</div>
+									</fieldset>
+								</form>
+							</div>
+						</div>
+						<div id="pref_title"></div>
+					</div>
+					<!-- SCROLLABLE FAQ -->
+					<div id="faq" class="scrollable">
+						<div class="container">
+							<div class="full">
+								<div id="faq-content"></div>
+							</div>
+						</div>
+						<div id="faq_title"></div>
+					</div>
+				</div>
+				<div id="menu-shadow"></div>
+			</section>
+		</div>
+		<!-- PRINT -->
+		<div id="print">
+			<div id="print-head">
+				<div class="btn blue hover print"></div>
+				<div class="btn yellow hover cancel"></div>
+			</div>
+			<div id="print-list"></div>
+		</div>
+		<!-- CYPHERING KEY DEFINITION -->
+		<div id="key-new" class="fullscreen outer hidden">
+			<div class="inner">
+				<form id="form-key-new">
+					<fieldset class="before-bar">
+						<legend id="key_new_legend"></legend>
+						<div id="key_new_label_1" class="input-label justify"></div>
+						<div class="input-wrapper hover">
+							<span class="input-icon icon-key2"></span>
+							<input id="key_new_1" type="password">
+						</div>
+						<div id="key_new_label_2" class="input-label justify"></div>
+						<div class="input-wrapper hover">
+							<span class="input-icon icon-key2"><img></span>
+							<input id="key_new_2" type="password">
+						</div>
+						<div class="form-error"></div>
+					</fieldset>
+					<div class="form-bar">
+						<div id="btn_new_key_confirm" class="hover btn ok blue"></div>
+						<div id="btn_new_key_cancel" class="hover btn cancel dark"></div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<!-- CYPHERING KEY INPUT -->
+		<div id="key-enter" class="fullscreen outer hidden">
+			<div class="inner">
+				<form id="form-key-enter">
+					<fieldset class="before-bar">
+						<legend id="key_enter_legend"></legend>
+						<div id="key_enter_label" class="input-label justify"></div>
+						<div class="input-wrapper hover">
+							<span class="input-icon icon-key2"></span>
+							<input id="key_enter" type="password">
+						</div>
+						<div class="form-error"></div>
+					</fieldset>
+					<div class="form-bar">
+						<div id="btn_enter_key_confirm" class="hover btn ok blue"></div>
+						<div id="btn_enter_key_cancel" class="hover btn cancel dark"></div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<!-- LANDSCAPE VIEW WITH SMALL SCREEN -->
+		<div id="landscape" class="fullscreen outer lang">
+			<div class="inner">
+				<div class="rotate-foverer"></div>
+			</div>
+		</div>
+		<!-- FOOTER -->
 		<footer>
 			<div>
-				<table id="snb">
-					<tr>
-						<td class="verb" id="snbShare"></td><td><a class="icon-mail sn-ico tooltip" id="snbShareMail"></a><a target="_blank" class="icon-facebook2 sn-ico tooltip" id="snbShareFb"></a><a target="_blank" class="icon-twitter2 sn-ico tooltip" id="snbShareTw"></a><a target="_blank" class="icon-google-plus2 sn-ico tooltip" id="snbShareGplus"></a><a target="_blank" class="icon-linkedin sn-ico tooltip" id="snbShareIn"></a></td><td class="verb" id="snbFollow"></td><td><a target="_blank" class="icon-twitter sn-ico tooltip" id="snbFollowTw"></a></td>
-					</tr>
-				</table>
+				<span id="label_version">version</span><span id="version"></span>&nbsp;&nbsp;<span id="upload" class="icon-upload2 blue-dark hidden"></span>
+				<div id="flag" class="lang fr tooltip"></div>
 			</div>
 		</footer>
+		<!-- TOP SCREEN NOTIFICATION -->
+		<div id="notif">
+			<div id="notif-body"></div>
+			<div id="notif-close" class="icon-cancel-circle2"></div>
+		</div>
+		<!-- SHADOW -->
+		<div class="fullscreen shadow">
+			<div id="languages">
+				<div id="lang-en" class="btn hover">
+					<img src="img/flag-en-32x32.png"> english
+				</div>
+				<div id="lang-fr" class="btn hover">
+					<img src="img/flag-fr-32x32.png"> français
+				</div>
+				<div class="btn hover yellow cancel">
+					cancel
+				</div>
+			</div>
+		</div>
 	</body>
 </html>
