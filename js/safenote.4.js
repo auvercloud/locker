@@ -412,7 +412,8 @@ function ui() {
 			email : $("#signin-email").val(),
 			password : $("#signin-pwd").val(),
 			fingerprint : arc.device.fingerprint(),
-			ttl : "forever"
+			ttl : "forever",
+			lang : safenote.lang
 		}, {
 			success : function(r) {
 				if (r.code != "200") {
