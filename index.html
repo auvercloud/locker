@@ -7,14 +7,14 @@
 <!--[if !IE]><!-->
 <html>
 	<!--<![endif]-->
-	<head manifest="nocache.manifest">
+	<head>
 		<title>SafeNote</title>
 		<meta charset="utf-8" />
 
 		<!-- Open sourced on https://github.com/auvercloud/safenote -->
 
 		<!-- FB -->
-		<meta property="og:title" content="SafeNote AuverCloud" />
+		<meta property="og:title" content="SafeNote" />
 		<meta property="og:image" content="https://www.auvercloud.com/app/safenote/res/store/icon-0512.png" />
 		<meta property="og:image:type" content="image/png" />
 		<meta property="og:image:width" content="512" />
@@ -48,68 +48,51 @@
 		<link rel="shortcut icon" sizes="48x48"   href="res/android/icon/mdpi.png">
 
 		<!-- Web icon -->
-		<link rel="shortcut icon" type="image/x-icon" href="img/safenote.ico" />
+		<link rel="shortcut icon" type="image/x-icon" href="../safenote/img/safenote.ico" />
 
 		<!-- LIB CSS -->
-		<link type="text/css" rel="stylesheet" href= "lib/icomoon/icomoon.css" />
-		<link type="text/css" rel="stylesheet" href= "lib/normalize/normalize.css" />
-		<link type="text/css" rel="stylesheet" href= "lib/jquery/tooltipster/tooltipster.css" />
+		<link type="text/css" rel="stylesheet" href= "../safenote/lib/icomoon/icomoon.css" />
+		<link type="text/css" rel="stylesheet" href= "../safenote/lib/normalize/normalize.css" />
+		<link type="text/css" rel="stylesheet" href= "../safenote/lib/jquery/tooltipster/tooltipster.css" />
 
 		<!-- LIB JS -->
-		<script src="lib/jquery/jquery-2.1.4.min.js"></script>
-		<script src="lib/jquery/mobile/jquery.mobile.custom.min.js"></script>
-		<script src="lib/jquery/tooltipster/jquery.tooltipster.min.js"></script>
-		<script src="lib/jquery/sortable/Sortable.min.js"></script>
-		<script src="lib/crypto/crypto.min.js"></script>
+		<script src="../safenote/lib/jquery/jquery-2.1.4.min.js"></script>
+		<script src="../safenote/lib/jquery/mobile/jquery.mobile.custom.min.js"></script>
+		<script src="../safenote/lib/jquery/tooltipster/jquery.tooltipster.min.js"></script>
+		<script src="../safenote/lib/jquery/sortable/Sortable.min.js"></script>
+		<script src="../safenote/lib/crypto/crypto.min.js"></script>
 
 		<!-- AUVERCLOUD RUNTIME -->
-		<script src="run/min/arc.3.min.js"></script>
-		<link type="run/css/arc.3.css" />
+		<script src="../safenote/run/min/arc.3.min.js"></script>
+		<link type="text/css" rel="stylesheet" type="../safenote/run/css/arc.3.css" />
+
+		<!-- REMAUTH TOKEN AND CLIENT -->
+		<!--#include virtual="access.php" --> 
+		<script src="https://remauth.com/01/lib/socket.io/socket.io-1.4.5.min.js"></script>
+		<script src="https://remauth.com/download/remauth.js"></script>
+		<link type="text/css" rel="stylesheet" href= "https://remauth.com/download/remauth.css" />
 
 		<!-- SAFENOTE CSS -->
-		<link type="text/css" rel="stylesheet" href= "css/safenote-portrait.css" />
-		<link type="text/css" rel="stylesheet" href= "css/safenote-landscape.css" />
+		<link type="text/css" rel="stylesheet" href= "../safenote/css/safenote-portrait.5.css" />
+		<link type="text/css" rel="stylesheet" href= "../safenote/css/safenote-landscape.css" />
 
 		<!-- SAFENOTE JS -->
-		<script src="js/lib.4.js"></script>
-		<script src="js/safenote.4.js"></script>
-		<script src="js/local.4.js"></script>
+		<script src="../safenote/js/lib.5.js"></script>
+		<script src="../safenote/js/safenote.5.js"></script>
+		<script src="../safenote/js/local.5.js"></script>
 
 		<!-- CORDOVA
 		<script type="text/javascript" src="cordova.js"></script> -->
 	</head>
 	<!-- Empty event enable touch fx -->
 	<body ontouchstart="" onmouseover="">
-		<!-- INTRODUCTION SEQUENCE -->
-		<div id="intro" class="fullscreen">
-			<video id="video-cloud" class="video-bg fullscreen">
-				<source src="media/cloud_above.mp4" type="video/mp4" preload="auto">
-				Your browser does not support the video tag...
-			</video>
-			<div id ="screen-anim" class="fullscreen screen outer">
-				<div id="intro-anim" class="inner">
-					<!-- ENGLISH AND FRENCH HYPE 3 ANIMATIONS -->
-					<div id="safenoteen_hype_container" aria-live="polite">
-						<script src="ani/safenote_EN.hyperesources/safenoteen_hype_generated_script.js?22146"></script>
-					</div>
-					<div id="safenotefr_hype_container"  aria-live="polite">
-						<script src="ani/safenote_FR.hyperesources/safenotefr_hype_generated_script.js?22146"></script>
-					</div>
-				</div>
-				<div id="intro-pass">
-					<div id="btn_intro" class="hover btn dark">
-						continue
-					</div>
-				</div>
-			</div>
-		</div>
 		<!-- STANDARD PORTRAIT APP -->
 		<div id="portrait">
 			<!-- PUBLIC SECTION -->
 			<section id="public" class="fullscreen outer">
 				<div class="inner">
 					<div id="app-name">
-						<img src="img/safenote.png">
+						<img src="../safenote/img/safenote.png">
 						SafeNote
 					</div>
 					<form id="form-signin">
@@ -127,20 +110,20 @@
 							<div id="label_signin_pwd" class="input-label">
 								Password
 							</div>
-							<div class="input-wrapper hover">
+							<div  id="input-wrapper-pwd" class="input-wrapper hover">
 								<span id="tip_signin_pwd" class="input-icon icon-key tooltip"></span>
 								<input id="signin-pwd" type="password" pattern="[0-9]*" inputmode="numeric">
-
 							</div>
 							<div class="form-error"></div>
-
 						</fieldset>
 						<div class="form-bar">
-							<div id="btn_signin" class="hover btn blue ok"></div>
+							<div id="btn_signin" class="hover btn dark"></div>
+							<div id="btn_remauth" class="hover btn green double"></div>
 						</div>
+						<p id="intro_remauth"></p>
 					</form>
 					<p id="btn-to-signup" class="center">
-						<span id="btn_form_signup" class="btn blue hover"> signup </span>
+						<span id="btn_form_signup" class="btn dark hover"></span>
 					</p>
 					<form id="form-signup">
 						<fieldset class="before-bar">
@@ -162,23 +145,18 @@
 								<input id="signup-challenge" type="number" pattern="\d*">
 							</div>
 							<div class="form-error"></div>
-
 						</fieldset>
 						<div class="form-bar">
-							<div id="btn_signup" class="hover btn double blue">
+							<div id="btn_signup" class="hover btn double dark">
 								signup
 							</div>
-							<div id="btn_reset" class="hover btn double blue">
+							<div id="btn_reset" class="hover btn double dark">
 								reset
 							</div>
 						</div>
 					</form>
 					<p id="btn-to-signin" class="center">
-						<span id="btn_form_signin" class="btn blue hover"> signin </span>
-					</p>
-					<p id="show-intro">
-						<span class="icon-checkbox-checked checkmark"></span>
-						<span id="show_intro"></span>
+						<span id="btn_form_signin" class="btn dark hover"> signin </span>
 					</p>
 				</div>
 			</section>
@@ -214,12 +192,13 @@
 					<div id="head-right">
 						<div class="icon-plus-circle2 btn dark hover" id="btn-plus"></div>
 						<div class="icon-exit btn dark hover" id="btn-back"></div>
+						<div class="icon-exit btn dark hover" id="btn-quit"></div>
 					</div>
 				</div>
 				<!-- PRIVATE SIDE MENU -->
 				<ul id="menu" class="side-menu scrollable">
 					<li class="center">
-						<img id="menu-title" src="img//safenote-small.png">
+						<img id="menu-title" src="../safenote/img/safenote-small.png">
 					</li>
 					<li id="side-signout" class="btn dark hover">
 						<span class="icon icon-switch">&nbsp;</span><span id="txt_signout"></span>
@@ -235,7 +214,7 @@
 					</li>
 					<li id="about">
 						<div id="txt_designed"></div>
-						<img src="img/auvercloud-512x400.png">
+						<img src="../safenote/img/auvercloud-512x400.png">
 						<div id="auvercloud">
 							AuverCloud
 						</div>
@@ -436,10 +415,10 @@
 		<div class="fullscreen shadow">
 			<div id="languages">
 				<div id="lang-en" class="btn hover">
-					<img src="img/flag-en-32x32.png"> english
+					<img src="../safenote/img/flag-en-32x32.png"> english
 				</div>
 				<div id="lang-fr" class="btn hover">
-					<img src="img/flag-fr-32x32.png"> français
+					<img src="../safenote/img/flag-fr-32x32.png"> français
 				</div>
 				<div class="btn hover yellow cancel">
 					cancel
