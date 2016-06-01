@@ -8,7 +8,7 @@ The current version is based on AuverCloud API server and runtime client version
 ##Live demo##
 The application itself is up and running at this address [https://www.auvercloud.com/app/safenote/](https://www.auvercloud.com/app/safenote/).
 
-Version 5 contains an experimental remote authentication feature. See [https://remauth.com]remauth.com
+Version 5 contains an experimental remote authentication feature. See [https://remauth.com](remauth.com).
 
 ##About AuverCloud##
 For further details about AuverCloud API server, please see [auvercloud.com](https://www.auvercloud.com) to get started.
